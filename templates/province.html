@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block content %}
+    
+    {% if messages %}
+        <div class="alert alert-primary " role="alert">
+            {% for message in messages %}
+                <strong>{{message}}</strong>
+            {% endfor %}
+            </button>
+      </div>
+    {% endif %}
+    <form class="form-inline mt-2" method="GET" action="{% url 'chercher_province'%}">
+        <div class="form-group">
+          <input type="Text" class="form-control" id="nom_chercher" name="nom_chercher" placeholder="nom à chercher ici">
+        </div>
+        <button type="submit" class="btn btn-primary">search</button>
+        <button type="button" class="btn btn-primary ml-1" ><a style="color: white;" href="{% url 'province_url'%}">OK</a></button>
+    </form>
+    <form method="POST" action="ajouter_province" class="form-inline" id="id_pro">
+        {% csrf_token %}
+        <div class="form-group mt-2 ">
+            <h5><label for="nom_province" >Nom du province : </label></h5>
+            <input type="text" class="form-control ml-2" id="nom_province"  name="nom_province" placeholder="Nom du province ?" autocomplete="off">
+            <button type="submit" class="btn btn-primary ml-2" id="btn_pro">Ajouter le province</button>
+        </div>
+
+    </form>
+    <div class="scrollable  mt-5">
+            <table class="table table-bordered table-condense ">
+                <thead>
+                    <tr >
+                        <th >ID</th>
+                        <th >Noms des province</th>
+                        <th colspan="2" ></th>
+                    </tr>
+                </thead>
+                <tbody >
+                    
+                    {% for item in liste  %}
+                        <tr >
+                            <td style="width: 100px;">{{item.id}}</td>
+                            <td >{{item.nom_province}}</td>
+                            <td style="width: 50px;">
+                                <form action="delete_province/{{ item.id }}" method="POST">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm" >Del</button>
+                                </form>
+                            </td>
+                            <td style="width: 50px;">
+                                <form action="edit_province/{{ item.id }}" method="POST">
+                                    {% csrf_token %}
+                                    <button type="submit" id="edit" class="btn btn-warning btn-sm">Edit</button>
+                                </form>
+                                    
+                                
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr >
+                            <h2><td colspan="6" >Il n'y a pas des provinces enregistrés </td></h2>
+                        </tr>
+                    {% endfor %}
+                        
+                </tbody>
+            </table>
+    </div>
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        setTimeout(function() {
+            $('.alert').fadeOut('slow');}, 5000
+          );
+        
+        
+    </script>
+{% endblock %}

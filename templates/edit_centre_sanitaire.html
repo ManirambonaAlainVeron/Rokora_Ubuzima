@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <div class="modal fade" id="modal-province">
+        
+        <div class="modal-dialog">
+            <div class="modal-content" id="cont">
+                <form action="{% url 'update_centre_url' centre.id %}" method="POST" id="ense">
+                    {% csrf_token %}
+                               
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Renomer le centre sanitaire</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <input type="text" name="nom_centre" id="nom_centre" value="{{centre.nom_centre}}" class="form-control form-control-lg"></br>
+                                </div>
+                                <div class="modal-footer">
+                                    <a  class="btn btn-default"  href="{% url 'centre_url' %}">Close</a>
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                </div>
+                        
+                </form>
+            </div>
+        </div>
+    </div>    
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        $("body").ready(function(){
+            $('#modal-province').modal('show');
+        });  
+    </script>
+{% endblock %}
