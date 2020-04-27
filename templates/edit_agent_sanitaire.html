@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="modal fade" id="modal-province">
+        
+        <div class="modal-dialog">
+            <div class="modal-content" id="cont">
+                <form action="{% url 'update_agent_sanitaire_url' agent.id %}" method="POST" id="ense">
+                    {% csrf_token %}
+                               
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Modifier le zone</h5>
+                                </div>
+                                <div class="modal-body">
+                                        {% if messages %}
+                                        <div class="alert alert-primary " role="alert">
+                                        {% for message in messages %}
+                                            <strong>{{message}}</strong>
+                                        {% endfor %}
+                                        </div>
+                                         {% endif %}
+                                        <input type="text" class="form-control ml-3 col-md-4" id="nom"  name="nom" value="{{agent.nom}}" placeholder="Le nom ?" autocomplete="off">
+                                        <input type="text" class="form-control ml-3 col-md-4" id="prenom"  name="prenom" value="{{agent.prenom}}" placeholder="Le prenom ?" autocomplete="off">
+                                        <input type="text" class="form-control ml-3 col-md-4" id="username"  name="username" value="{{agent.user__username}}" placeholder="username ?" autocomplete="off">
+                                        <select class="form-control ml-3 col-md-5" name="etat" id="etat" required>
+                                            <option value="">selectionnez etat ?</option>
+                                            <option value="True">Activer</option>
+                                            <option value="False">Desactiver</option>
+                                        </select>
+                                        <select class="form-control ml-3 col-md-5" name="profil"  id="profil" required>
+                                            <option value="">selectionnez profil ?</option>
+                                            <option value="administrateur">Admin</option>
+                                            <option value="simple">Simple</option>
+                                        </select>
+                                </div>
+                                <div class="modal-footer">
+                                    <a  class="btn btn-default"  href="{% url 'agent_sanitaire_url' %}">Close</a>
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                </div>
+                        
+                </form>
+            </div>
+        </div>
+    </div>    
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        $("body").ready(function(){
+            $('#modal-province').modal('show');
+        });  
+    </script>
+{% endblock %}

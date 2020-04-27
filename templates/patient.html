@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% block content %}
+    
+    {% if messages %}
+        <div class="alert alert-primary " role="alert">
+            {% for message in messages %}
+                <strong>{{message}}</strong>
+            {% endfor %}
+            </button>
+      </div>
+    {% endif %}
+    <form class="form-inline mt-2" method="GET" action="{% url 'chercher_code_url' %}">
+        <div class="form-group">
+          <input type="Text" class="form-control" id="code_chercher" name="code_chercher" placeholder="chercher par code">
+        </div>
+        <button type="submit" class="btn btn-primary">search</button>
+        <button type="button" class="btn btn-primary ml-1" ><a style="color: white;" href="{% url 'patient_url'%}">OK</a></button>
+    </form>
+    <form class="form-inline mt-2" method="GET" action="{% url 'chercher_sanguin_url' %}">
+        <div class="form-group">
+            <select class="form-control " name="chercher_g" id="chercher_g">
+                <option value="">Chercher par groupe sanguin</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="O">O</option>
+                <option value="AB">AB</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">search</button>
+        <button type="button" class="btn btn-primary ml-1" ><a style="color: white;" href="{% url 'patient_url'%}">OK</a></button>
+    </form>
+        <div class="row mt-5"> 
+            <div class="col-4">
+                <form method="POST" action="ajouter_patient" class="form-inline" id="id_form">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <input type="text" class="form-control ml-3 col-md-5" id="nom"  name="nom" placeholder="Le nom ?" autocomplete="off">
+                        <input type="text" class="form-control ml-3 col-md-5" id="prenom"  name="prenom" placeholder="Le prenom ?" autocomplete="off">
+                    </div>
+                    <div class="form-row mt-5">
+                        <input type="text" class="form-control ml-3 col-md-5" id="contact"  name="contact" placeholder="Le contact ?" autocomplete="off">
+                        <input type="text" class="form-control ml-3 col-md-5" id="code"  name="code" placeholder="Le code ?" autocomplete="off">
+                    </div>
+                    <div class="form-row mt-5">
+                        <select class="form-control ml-3 col-md-5" name="sanguin"  id="sanguin">
+                            <option value="">Groupe Sanguin ?</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="O">O</option>
+                            <option value="AB">AB</option>
+                        </select>
+                        <select class="form-control ml-3 col-md-5 chosen" name="zone"  id="zone">
+                            <option value="">Selectionnez la zone</option>
+                            {% for item in zone %}
+                            <option value="{{item.id}}" >{{item.nom_zone}}</option>
+                            {% endfor %}
+                        </select><br>
+                    </div>
+                    <div class="form-row mt-3">
+                        <button type="submit" class="btn btn-primary ml-3 col-md-5" id="btn_allergie">Enregistrer</button>    
+                    </div>      
+                </form>
+            </div>
+            <div class="scrollable  col-8">
+                    
+                    {% if nbr_patient %}
+                        <h3>{{nbr_patient}} personne{{nbr_patient|pluralize}}</h3>
+                    {% endif %}
+                        
+                    <table class="table table-bordered table-condense ">
+                        <thead>
+                            <tr >
+                                <th >ID</th>
+                                <th >Nom</th>
+                                <th >Prenom</th>
+                                <th >Contact</th>
+                                <th >Zone</th>
+                                <th >Code</th>
+                                <th >Groupe Sanguin</th>
+                                <th colspan="2" ></th>
+                            </tr>
+                        </thead>
+                        <tbody >
+                            
+                            {% for item in liste  %}
+                                <tr >
+                                    <td style="width: 100px;">{{item.id}}</td>
+                                    <td >{{item.nom_pat}}</td>
+                                    <td >{{item.prenom_pat}}</td>
+                                    <td >{{item.contact}}</td>
+                                    <td >{{item.zone__nom_zone}}</td>
+                                    <td >{{item.code}}</td>
+                                    <td >{{item.groupe_sanguin}}</td>
+                                    <td style="width: 50px;">
+                                        <form action="delete_patient/{{ item.id }}" method="POST">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger btn-sm" >Del</button>
+                                        </form>
+                                    </td>
+                                    <td style="width: 50px;">
+                                        <form action="edit_patient/{{ item.id }}" method="POST">
+                                            {% csrf_token %}
+                                            <button type="submit" id="edit" class="btn btn-warning btn-sm">Edit</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr >
+                                    <h2><td colspan="6" >Il n'y a pas des patients enregistrées </td></h2>
+                                </tr>
+                            {% endfor %}
+                                
+                        </tbody>
+                    </table>
+            </div>
+        </div>
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        setTimeout(function() {
+            $('.alert').fadeOut('slow');}, 5000
+          );
+        $(function(){
+            $(".chosen").chosen()
+        });
+        
+    </script>
+{% endblock %}

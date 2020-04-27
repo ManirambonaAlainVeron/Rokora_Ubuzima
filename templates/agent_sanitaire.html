@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block content %}
+    
+    {% if messages %}
+        <div class="alert alert-primary " role="alert">
+            {% for message in messages %}
+                <strong>{{message}}</strong>
+            {% endfor %}
+            </button>
+      </div>
+    {% endif %}
+    <form class="form-inline mt-2" method="GET" action="{% url 'chercher_agent_sanitaire_url' %}">
+        <div class="form-group">
+          <input type="Text" class="form-control" id="nom_chercher" name="nom_chercher" placeholder="chercher par nom">
+        </div>
+        <button type="submit" class="btn btn-primary">search</button>
+        <button type="button" class="btn btn-primary ml-1" ><a style="color: white;" href="{% url 'agent_sanitaire_url'%}">OK</a></button>
+    </form>
+        <div class="row mt-5"> 
+            <div class="col-4">
+                <form method="POST" action="ajouter_agent_sanitaire" class="form-inline" id="id_form">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <input type="text" class="form-control ml-3 col-md-5" id="nom"  name="nom" placeholder="Le nom ?" autocomplete="off">
+                        <input type="text" class="form-control ml-3 col-md-5" id="prenom"  name="prenom" placeholder="Le prenom ?" autocomplete="off">
+                    </div>
+                    <div class="form-row mt-5">
+                        <input type="text" class="form-control ml-3 col-md-5" id="username"  name="username" placeholder="Username ?" autocomplete="off">
+                        <input type="text" class="form-control ml-3 col-md-5" id="password"  name="password" placeholder="Password ?" autocomplete="off">
+                    </div>
+                    <div class="form-row mt-5">
+                        <select class="form-control ml-3 col-md-5" name="etat"  id="etat">
+                            <option value="">selectionnez etat ?</option>
+                            <option value="True">Activer</option>
+                            <option value="False">Desactiver</option>
+                        </select>
+                        <select class="form-control ml-3 col-md-5" name="profil"  id="profil">
+                            <option value="">selectionnez profil ?</option>
+                            <option value="administrateur">Admin</option>
+                            <option value="simple">Simple</option>
+                        </select><br>
+                    </div>
+                    <div class="form-row mt-3">
+                        <button type="submit" class="btn btn-primary ml-3 col-md-5" id="btn_enr">Creer un utilisateur</button>    
+                    </div>      
+                </form>
+            </div>
+            <div class="scrollable  col-8">
+                    <table class="table table-bordered table-condense ">
+                        <thead>
+                            <tr >
+                                <th >ID</th>
+                                <th >Nom</th>
+                                <th >Prenom</th>
+                                <th >Username</th>
+                                <th >Active</th>
+                                <th >Profil</th>
+                                <th colspan="2" ></th>
+                            </tr>
+                        </thead>
+                        <tbody >
+                            
+                            {% for item in liste  %}
+                                <tr >
+                                    <td style="width: 100px;">{{item.id}}</td>
+                                    <td >{{item.nom}}</td>
+                                    <td >{{item.prenom}}</td>
+                                    <td >{{item.user__username}}</td>
+                                    <td >{{item.user__is_active}}</td>
+                                    <td >{{item.profil}}</td>
+                                    <td style="width: 50px;">
+                                        <form action="delete_agent_sanitaire/{{ item.id }}" method="POST">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger btn-sm" >Del</button>
+                                        </form>
+                                    </td>
+                                    <td style="width: 50px;">
+                                        <form action="edit_agent_sanitaire/{{ item.id }}" method="POST">
+                                            {% csrf_token %}
+                                            <button type="submit" id="edit" class="btn btn-warning btn-sm">Edit</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr >
+                                    <h2><td colspan="6" >Il n'y a pas des agents sanitaires enregistrées </td></h2>
+                                </tr>
+                            {% endfor %}
+                                
+                        </tbody>
+                    </table>
+            </div>
+        </div>
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        setTimeout(function() {
+            $('.alert').fadeOut('slow');}, 5000
+          );
+        
+        
+    </script>
+{% endblock %}

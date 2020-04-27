@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block content %}
+    
+    {% if messages %}
+        <div class="alert alert-primary " role="alert">
+            {% for message in messages %}
+                <strong>{{message}}</strong>
+            {% endfor %}
+            </button>
+      </div>
+    {% endif %}
+    <form class="form-inline mt-2" method="GET" action="{% url 'chercher_agent_centre_par_centre_url' %}">
+        <div class="form-group">
+          <input type="Text" class="form-control" id="centre_chercher" name="centre_chercher" placeholder="chercher par centre">
+        </div>
+        <button type="submit" class="btn btn-primary">search</button>
+        <button type="button" class="btn btn-primary ml-1" ><a style="color: white;" href="{% url 'agent_centre_url'%}">OK</a></button>
+    </form>
+    <form class="form-inline mt-2" method="GET" action="{% url 'chercher_agent_centre_par_prenom_url' %}">
+        <div class="form-group">
+          <input type="Text" class="form-control" id="prenom_chercher" name="prenom_chercher" placeholder="chercher par prenom">
+        </div>
+        <button type="submit" class="btn btn-primary">search</button>
+        <button type="button" class="btn btn-primary ml-1" ><a style="color: white;" href="{% url 'agent_centre_url' %}">OK</a></button>
+    </form>
+    <form method="POST" action="ajouter_agent_centre" class="form-inline" id="id_form">
+        {% csrf_token %}
+        <div class="form-row align-items-center mt-5 col-md-10">
+            <select class="form-control ml-3 col-md-4 chosen" name="select_agent"  id="select_pat">
+                <option value="">Selectionnez l'agent sanitaire</option>
+                {% for item in agent %}
+                  <option value="{{item.id}}" >{{item.nom}} {{item.prenom}} | {{item.user__username}} | {{item.profil}}</option>
+                {% endfor %}
+            </select>
+            <select class="form-control ml-3 col-md-4 chosen" name="select_centre"  id="select_all">
+                <option value="">Selectionnez le centre sanitaire</option>
+                {% for item in centre %}
+                  <option value="{{item.id}}" >{{item.nom_centre}}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-primary ml-3 col-md-2" id="btn_allergie">Enregistrer</button>
+        </div>
+    </form>
+    <div class="scrollable  mt-5">
+            <table class="table table-bordered table-condense ">
+                <thead>
+                    <tr >
+                        <th >ID</th>
+                        <th >Nom</th>
+                        <th >Prenom</th>
+                        <th >Username</th>
+                        <th >Profil</th>
+                        <th >Centre sanitaire</th>
+                        <th ></th>
+                    </tr>
+                </thead>
+                <tbody >
+                    
+                    {% for item in liste  %}
+                        <tr >
+                            <td style="width: 100px;">{{item.id}}</td>
+                            <td >{{item.agent_sanitaire__nom}}</td>
+                            <td >{{item.agent_sanitaire__prenom}}</td>
+                            <td >{{item.agent_sanitaire__user__username}}</td>
+                            <td >{{item.agent_sanitaire__profil}}</td>
+                            <td >{{item.centre_sanitaire__nom_centre}}</td>
+                            
+                            <td style="width: 50px;">
+                                <form action="delete_agent_centre/{{ item.id }}" method="POST">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm" >Del</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr >
+                            <h2><td colspan="6" >Il n'y a pas des données enregistrées </td></h2>
+                        </tr>
+                    {% endfor %}
+                        
+                </tbody>
+            </table>
+    </div>
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        setTimeout(function() {
+            $('.alert').fadeOut('slow');}, 5000
+          );
+        
+        $(function(){
+            $(".chosen").chosen()
+        })
+    </script>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="modal fade" id="modal-province">
+        
+        <div class="modal-dialog">
+            <div class="modal-content" id="cont">
+                <form action="{% url 'update_patient_url' patient.id %}" method="POST" id="ense">
+                    {% csrf_token %}
+                               
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Modifier le zone</h5>
+                                </div>
+                                <div class="modal-body">
+                                        <input type="text" class="form-control ml-3 col-md-4" id="nom"  name="nom" value="{{patient.nom_pat}}" placeholder="Le nom ?" autocomplete="off">
+                                        <input type="text" class="form-control ml-3 col-md-4" id="prenom"  name="prenom" value="{{patient.prenom_pat}}" placeholder="Le prenom ?" autocomplete="off">
+                                        <input type="text" class="form-control ml-3 col-md-4" id="contact"  name="contact" value="{{patient.contact}}" placeholder="Le contact ?" autocomplete="off">
+                                        <input type="text" class="form-control ml-3 col-md-4" id="code"  name="code" value="{{patient.code}}" placeholder="Le code ?" autocomplete="off">
+                                        <select class="form-control ml-3 col-md-4" name="sanguin" id="sanguin">
+                                            <option value="A">A</option>
+                                            <option value="B">B</option>
+                                            <option value="O">O</option>
+                                            <option value="AB">AB</option>
+                                        </select>
+                                </div>
+                                <div class="modal-footer">
+                                    <a  class="btn btn-default"  href="{% url 'patient_url' %}">Close</a>
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                </div>
+                        
+                </form>
+            </div>
+        </div>
+    </div>    
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        $("body").ready(function(){
+            $('#modal-province').modal('show');
+        });  
+    </script>
+{% endblock %}

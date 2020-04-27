@@ -9,9 +9,16 @@
             </button>
       </div>
     {% endif %}
+    <form class="form-inline mt-2" method="GET" action="{% url 'chercher_commune_pro_url' %}">
+        <div class="form-group">
+          <input type="Text" class="form-control" id="nom_chercher" name="nom_chercher" placeholder="chercher par province">
+        </div>
+        <button type="submit" class="btn btn-primary">search</button>
+        <button type="button" class="btn btn-primary ml-1" ><a style="color: white;" href="{% url 'commune_url'%}">OK</a></button>
+    </form>
     <form class="form-inline mt-2" method="GET" action="{% url 'chercher_commune_url' %}">
         <div class="form-group">
-          <input type="Text" class="form-control" id="nom_chercher" name="nom_chercher" placeholder="province à chercher ici">
+          <input type="Text" class="form-control" id="nom_chercher_com" name="nom_chercher_com" placeholder="chercher commune">
         </div>
         <button type="submit" class="btn btn-primary">search</button>
         <button type="button" class="btn btn-primary ml-1" ><a style="color: white;" href="{% url 'commune_url'%}">OK</a></button>
@@ -19,7 +26,7 @@
     <form method="POST" action="ajouter_commune" class="form-inline" id="id_form">
         {% csrf_token %}
         <div class="form-row align-items-center mt-5 col-md-10">
-            <select class="form-control ml-3 col-md-4" name="select_pro"  id="select_pro">
+            <select class="form-control ml-3 col-md-4 chosen" name="select_pro"  id="select_pro">
                 <option value="">Selectionnez la province</option>
                 {% for item in select_province %}
                   <option value="{{item.id}}" class="{{item.nom_province}}">{{item.nom_province}}</option>
@@ -61,7 +68,7 @@
                         </tr>
                     {% empty %}
                         <tr >
-                            <h2><td colspan="6" >Il n'y a pas des communes enregistrer </td></h2>
+                            <h2><td colspan="6" >Il n'y a pas des communes enregistrées </td></h2>
                         </tr>
                     {% endfor %}
                         
@@ -74,7 +81,9 @@
         setTimeout(function() {
             $('.alert').fadeOut('slow');}, 5000
           );
-        
+        $(function(){
+            $(".chosen").chosen()
+        })
         
     </script>
 {% endblock %}

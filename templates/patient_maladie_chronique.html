@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block content %}
+    
+    {% if messages %}
+        <div class="alert alert-primary " role="alert">
+            {% for message in messages %}
+                <strong>{{message}}</strong>
+            {% endfor %}
+            </button>
+      </div>
+    {% endif %}
+    <form class="form-inline mt-2" method="GET" action="{% url 'chercher_patient_maladie_chronique_url' %}">
+        <div class="form-group">
+          <input type="Text" class="form-control" id="nom_chercher" name="nom_chercher" placeholder="chercher par maladie">
+        </div>
+        <button type="submit" class="btn btn-primary">search</button>
+        <button type="button" class="btn btn-primary ml-1" ><a style="color: white;" href="{% url 'patient_maladie_chronique_url'%}">OK</a></button>
+    </form>
+    <form class="form-inline mt-2" method="GET" action="{% url 'chercher_patient_maladie_chronique_code_url' %}">
+        <div class="form-group">
+          <input type="Text" class="form-control" id="cod_chercher" name="cod_chercher" placeholder="chercher par code patient">
+        </div>
+        <button type="submit" class="btn btn-primary">search</button>
+        <button type="button" class="btn btn-primary ml-1" ><a style="color: white;" href="{% url 'patient_maladie_chronique_url' %}">OK</a></button>
+    </form>
+    <form method="POST" action="ajouter_patient_maladie_chronique" class="form-inline" id="id_form">
+        {% csrf_token %}
+        <div class="form-row align-items-center mt-5 col-md-10">
+            <select class="form-control ml-3 col-md-4 chosen" name="select_pat"  id="select_pat">
+                <option value="">Selectionnez le patient</option>
+                {% for item in patient %}
+                  <option value="{{item.id}}" >{{item.nom_pat}} {{item.prenom_pat}} {{item.code}}</option>
+                {% endfor %}
+            </select>
+            <select class="form-control ml-3 col-md-4 chosen" name="select_maladie"  id="select_maladie">
+                <option value="">Selectionnez l'allergie</option>
+                {% for item in maladie %}
+                  <option value="{{item.id}}" >{{item.nom_maladie}}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-primary ml-3 col-md-2" id="btn_allergie">Enregistrer</button>
+        </div>
+    </form>
+    <div class="scrollable  mt-5">
+        
+        {% if nbr %}             
+            <h4>{{nbr}} personne{{nbr|pluralize}}</h4>
+        {% endif %}
+
+            <table class="table table-bordered table-condense ">
+                <thead>
+                    <tr >
+                        <th >ID</th>
+                        <th >Nom</th>
+                        <th >Prenom</th>
+                        <th >Contact</th>
+                        <th >Zone</th>
+                        <th >Code</th>
+                        <th >Groupe Sanguin</th>
+                        <th >Maladie Chronique</th>
+                        <th ></th>
+                    </tr>
+                </thead>
+                <tbody >
+                    
+                    {% for item in liste  %}
+                        <tr >
+                            <td style="width: 100px;">{{item.id}}</td>
+                            <td >{{item.patient__nom_pat}}</td>
+                            <td >{{item.patient__prenom_pat}}</td>
+                            <td >{{item.patient__contact}}</td>
+                            <td >{{item.patient__zone__nom_zone}}</td>
+                            <td >{{item.patient__code}}</td>
+                            <td >{{item.patient__groupe_sanguin}}</td>
+                            <td >{{item.maladie_chronique__nom_maladie}}</td>
+                            <td style="width: 50px;">
+                                <form action="delete_patient_maladie_chronique/{{ item.id }}" method="POST">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm" >Del</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr >
+                            <h2><td colspan="6" >Il n'y a pas des données enregistrées </td></h2>
+                        </tr>
+                    {% endfor %}
+                        
+                </tbody>
+            </table>
+    </div>
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        setTimeout(function() {
+            $('.alert').fadeOut('slow');}, 5000
+          );
+        $(function(){
+            $(".chosen").chosen()
+        })
+        
+    </script>
+{% endblock %}

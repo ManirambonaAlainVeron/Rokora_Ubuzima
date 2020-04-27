@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% block content %}
+    
+    {% if messages %}
+        <div class="alert alert-primary " role="alert">
+            {% for message in messages %}
+                <strong>{{message}}</strong>
+            {% endfor %}
+            </button>
+      </div>
+    {% endif %}
+    <form class="form-inline mt-2" method="GET" action="{% url 'chercher_patient_allergie_url' %}">
+        <div class="form-group">
+          <input type="Text" class="form-control" id="code_chercher" name="code_chercher" placeholder="chercher par code">
+        </div>
+        <button type="submit" class="btn btn-primary">search</button>
+        <button type="button" class="btn btn-primary ml-1" ><a style="color: white;" href="{% url 'patient_allergie_url'%}">OK</a></button>
+    </form>
+    <form method="POST" action="ajouter_patient_allergie" class="form-inline" id="id_form">
+        {% csrf_token %}
+        <div class="form-row">
+            <div class="col">
+                <div style="margin-left: 30px;" >
+                        <label for="agent">Agent sanitaire</label>
+                        <select class="form-control ml-5 col-md-4 chosen" name="agent"  id="agent">
+                            <option value="{{user.id}}" selected>{{ agent.nom }} {{agent.prenom}}</option>
+                        </select>
+                </div>
+                <label for="patient">Patient :</label>
+                <select class="form-control ml-3 col-md-4 chosen" name="patient"  id="patient">
+                    <option value="">Selectionnez le patient</option>
+                    {% for item in patient %}
+                    <option value="{{item.id}}" >{{item.nom_pat}} {{item.prenom_pat}} {{item.code}}</option>
+                    {% endfor %}
+                </select>
+                <label for="dates">Date :</label>
+                <input type="Text" class="form-control" id="dates" name="dates" disabled>
+            </div> 
+
+            <div class="col">
+                    <label for="my-textarea">Traitement en cours :</label>
+                    <textarea id="my-textarea" class="form-control" name="traitement" rows="5"></textarea>  
+            </div>
+
+            <div class="col">
+                <button type="submit" class="btn btn-primary ml-3 col-md-2" id="btn_allergie">Enregistrer</button>
+            </div>   
+        </div>
+    </form>
+    <div class="scrollable  mt-5">
+            <table class="table table-bordered table-condense ">
+                <thead>
+                    <tr >
+                        <th >ID</th>
+                        <th >Nom patient</th>
+                        <th >Prenom patient</th>
+                        <th >Code patient</th>
+                        <th >Nom agent</th>
+                        <th >Prenom agent</th>
+                        <th >Centre sanitaire</th>
+                        <th >Date</th>
+                        <th >Traitement</th>
+                        <th colspan="2" ></th>
+                    </tr>
+                </thead>
+                <tbody >
+                    
+                    {% for item in liste  %}
+                        <tr >
+                            <td style="width: 100px;">{{item.id}}</td>
+                            <td >{{item.patient__nom_pat}}</td>
+                            <td >{{item.patient__prenom_pat}}</td>
+                            <td >{{item.patient__contact}}</td>
+                            <td >{{item.patient__zone__nom_zone}}</td>
+                            <td >{{item.patient__code}}</td>
+                            <td >{{item.patient__groupe_sanguin}}</td>
+                            <td >{{item.allergie__cause}}</td>
+                            <td >{{item.allergie__cause}}</td>
+                            <td style="width: 50px;">
+                                <form action="delete_allergie/{{ item.id }}" method="POST">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm" >Del</button>
+                                </form>
+                            </td>
+                            <td style="width: 50px;">
+                                <form action="edit_allergie/{{ item.id }}" method="POST">
+                                    {% csrf_token %}
+                                    <button type="submit" id="edit" class="btn btn-warning btn-sm">Edit</button>
+                                </form> 
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr >
+                            <h2><td colspan="6" >Il n'y a pas des données enregistrées </td></h2>
+                        </tr>
+                    {% endfor %}
+                        
+                </tbody>
+            </table>
+    </div>
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        setTimeout(function() {
+            $('.alert').fadeOut('slow');}, 5000
+          );
+        
+        $(function(){
+            $(".chosen").chosen()
+
+            $("#patient").change(function(){
+                var now = new Date()
+                var day = ("0" + now.getDate()).slice(-2);
+                var month = ("0" + (now.getMonth() + 1)).slice(-2);
+                var today = now.getFullYear()+"-"+(month)+"-"+(day) ;
+                $("#dates").val(today)
+            })
+            
+        });
+    </script>
+{% endblock %}

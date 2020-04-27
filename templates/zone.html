@@ -9,23 +9,30 @@
             </button>
       </div>
     {% endif %}
-    <form class="form-inline mt-2" method="GET" action="{% url 'chercher_allergie' %}">
+    <form class="form-inline mt-2" method="GET" action="{% url 'chercher_zone_com_url' %}">
         <div class="form-group">
-          <input type="Text" class="form-control" id="nom_chercher" name="nom_chercher" placeholder="province à chercher ici">
+          <input type="Text" class="form-control" id="nom_chercher_com" name="nom_chercher_com" placeholder="chercher par commune">
         </div>
         <button type="submit" class="btn btn-primary">search</button>
         <button type="button" class="btn btn-primary ml-1" ><a style="color: white;" href="{% url 'zone_url'%}">OK</a></button>
     </form>
-    <form method="POST" action="ajouter_allergie" class="form-inline" id="id_form">
+    <form class="form-inline mt-2" method="GET" action="{% url 'chercher_zone_url' %}">
+        <div class="form-group">
+          <input type="Text" class="form-control" id="nom_chercher" name="nom_chercher" placeholder="chercher zone">
+        </div>
+        <button type="submit" class="btn btn-primary">search</button>
+        <button type="button" class="btn btn-primary ml-1" ><a style="color: white;" href="{% url 'zone_url'%}">OK</a></button>
+    </form>
+    <form method="POST" action="ajouter_zone" class="form-inline" id="id_form">
         {% csrf_token %}
         <div class="form-row align-items-center mt-5 col-md-10">
-            <select class="form-control ml-3 col-md-4"  id="exampleFormControlSelect1">
-                <option value=" ">Selectionnez la province</option>
-                {% for item in select_province %}
-                  <option value="{{item.id}}">{{item.nom_province}}</option>
+            <select class="form-control ml-3 col-md-4 chosen" name="select_com"  id="select_pro">
+                <option value="">Selectionnez la commune</option>
+                {% for item in select_commune %}
+                  <option value="{{item.id}}" >{{item.nom_commune}}</option>
                 {% endfor %}
             </select>
-            <input type="text" class="form-control ml-3 col-md-4" id="cause"  name="cause" placeholder="Nom de la commune ?" autocomplete="off">
+            <input type="text" class="form-control ml-3 col-md-4" id="zone"  name="zone" placeholder="Nom du zone ?" autocomplete="off">
             <button type="submit" class="btn btn-primary ml-3 col-md-2" id="btn_allergie">Enregistrer</button>
         </div>
     </form>
@@ -34,8 +41,8 @@
                 <thead>
                     <tr >
                         <th >ID</th>
-                        <th >Province</th>
                         <th >Commune</th>
+                        <th >Zone</th>
                         <th colspan="2" ></th>
                     </tr>
                 </thead>
@@ -44,16 +51,16 @@
                     {% for item in liste  %}
                         <tr >
                             <td style="width: 100px;">{{item.id}}</td>
-                            <td >{{item.province}}</td>
-                            <td >{{item.nom_commune}}</td>
+                            <td >{{item.commune__nom_commune}}</td>
+                            <td >{{item.nom_zone}}</td>
                             <td style="width: 50px;">
-                                <form action="delete_allergie/{{ item.id }}" method="POST">
+                                <form action="delete_zone/{{ item.id }}" method="POST">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-danger btn-sm" >Del</button>
                                 </form>
                             </td>
                             <td style="width: 50px;">
-                                <form action="edit_allergie/{{ item.id }}" method="POST">
+                                <form action="edit_zone/{{ item.id }}" method="POST">
                                     {% csrf_token %}
                                     <button type="submit" id="edit" class="btn btn-warning btn-sm">Edit</button>
                                 </form>
@@ -61,7 +68,7 @@
                         </tr>
                     {% empty %}
                         <tr >
-                            <h2><td colspan="6" >Il n'y a pas des zones enregistrer </td></h2>
+                            <h2><td colspan="6" >Il n'y a pas des zones enregistrées </td></h2>
                         </tr>
                     {% endfor %}
                         
@@ -74,7 +81,9 @@
         setTimeout(function() {
             $('.alert').fadeOut('slow');}, 5000
           );
-        
+        $(function(){
+            $(".chosen").chosen()
+        })
         
     </script>
 {% endblock %}
