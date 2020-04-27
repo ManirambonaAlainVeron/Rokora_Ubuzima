@@ -9,21 +9,21 @@
             </button>
       </div>
     {% endif %}
-    <form class="form-inline mt-2" method="GET" action="{% url 'chercher_patient_allergie_url' %}">
+    <form class="form-inline mt-2" method="GET" action="{% url 'chercher_consultation_url' %}">
         <div class="form-group">
           <input type="Text" class="form-control" id="code_chercher" name="code_chercher" placeholder="chercher par code">
         </div>
         <button type="submit" class="btn btn-primary">search</button>
-        <button type="button" class="btn btn-primary ml-1" ><a style="color: white;" href="{% url 'patient_allergie_url'%}">OK</a></button>
+        <button type="button" class="btn btn-primary ml-1" ><a style="color: white;" href="{% url 'consultation_url'%}">OK</a></button>
     </form>
-    <form method="POST" action="ajouter_patient_allergie" class="form-inline" id="id_form">
+    <form method="POST" action="ajouter_consultation" class="form-inline" id="id_form">
         {% csrf_token %}
         <div class="form-row">
             <div class="col">
                 <div style="margin-left: 30px;" >
                         <label for="agent">Agent sanitaire</label>
                         <select class="form-control ml-5 col-md-4 chosen" name="agent"  id="agent">
-                            <option value="{{user.id}}" selected>{{ agent.nom }} {{agent.prenom}}</option>
+                            <option value="{{agent.id}}" selected>{{ agent.nom }} {{agent.prenom}}</option>
                         </select>
                 </div>
                 <label for="patient">Patient :</label>
@@ -77,13 +77,13 @@
                             <td >{{item.allergie__cause}}</td>
                             <td >{{item.allergie__cause}}</td>
                             <td style="width: 50px;">
-                                <form action="delete_allergie/{{ item.id }}" method="POST">
+                                <form action="delete_consultation/{{ item.id }}" method="POST">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-danger btn-sm" >Del</button>
                                 </form>
                             </td>
                             <td style="width: 50px;">
-                                <form action="edit_allergie/{{ item.id }}" method="POST">
+                                <form action="edit_consultation/{{ item.id }}" method="POST">
                                     {% csrf_token %}
                                     <button type="submit" id="edit" class="btn btn-warning btn-sm">Edit</button>
                                 </form> 
@@ -102,7 +102,7 @@
 {% block javascript %}
     <script type="text/javascript">
         setTimeout(function() {
-            $('.alert').fadeOut('slow');}, 5000
+            $('.alert').slideUp('slow');}, 5000
           );
         
         $(function(){

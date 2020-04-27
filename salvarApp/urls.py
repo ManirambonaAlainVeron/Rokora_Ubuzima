@@ -16,6 +16,11 @@ urlpatterns = [
 
     # consultation_url
     path('consultation', views.show_consultation, name='consultation_url'),
+    path('ajouter_consultation', views.ajouter_consultation, name='ajouter_consultation_url'),
+    path('delete_consultation/<int:id_consultation>', views.delete_consultation, name='delete_consultation_url'),
+    path('edit_consultation/<int:id_consultation>', views.edit_consultation, name='edit_consultation_url'),
+    path('update_consultation/<int:id_consultation>', views.update_consultation, name='update_consultation_url'),
+    path('chercher_consultation_patient', views.chercher_consultation_par_patient, name='chercher_consultation_url'),
 
     # patient_allergie_url
     path('patient_allergie', views.show_patient_allergie, name='patient_allergie_url'),

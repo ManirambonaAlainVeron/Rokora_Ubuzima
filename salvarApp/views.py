@@ -7,7 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from .models import Province,Allergie,Maladie_chronique,Centre_sanitaire,Commune,Zone,Patient,Patient_allergie,Patient_chronique,Agent_sanitaire,Agent_centre
+from .models import Province, Allergie, Maladie_chronique, Centre_sanitaire, Commune, Zone, Patient, Patient_allergie, Patient_chronique, Agent_sanitaire, Agent_centre, Consultation
 
 # Create your views here.
 def show_Accueil(request):
@@ -39,10 +39,82 @@ def connexion(request):
             messages.info(request, "Echec de connexion, le username ou le mot de passe est incorrecte ou tu es desactivé !")
             return redirect("auth_url")
 
+#agent_sanitaire  ou utilisateur views
+def show_agent_sanitaire(request):
+    liste = Agent_sanitaire.objects.all().values('id', 'nom', 
+    'prenom', 'user__username', 'user__password', 'user__is_active', 'profil')
+    return render(request, "agent_sanitaire.html", locals())
+
+def ajouter_agent_sanitaire(request):
+    if request.method == 'POST':
+        agent_nom = request.POST.get('nom')
+        agent_prenom = request.POST.get('prenom')
+        agent_username = request.POST.get('username')
+        agent_password = request.POST.get('password')
+        agent_etat = request.POST.get('etat')
+        agent_profil = request.POST.get('profil')
+        if len(agent_nom) == 0 or len(agent_prenom) == 0 or len(agent_username) == 0 or len(agent_password) == 0 or len(agent_etat) == 0 or len(agent_profil) == 0:
+            messages.info(request, "Completez tous les informations svp !")
+            return redirect("agent_sanitaire_url")
+        else:
+            try:
+                user = User.objects.create_user(username=agent_username, password=agent_password, is_active=agent_etat)
+            except IntegrityError :
+                messages.info(request, "Echec!! le username ou le mot de passe existe déjà !")
+                return redirect("agent_sanitaire_url")
+            agent = Agent_sanitaire(user = user, nom = agent_nom, prenom = agent_prenom, profil = agent_profil)
+            agent.save()
+            messages.info(request, "La creation d'un agent sanitaire ou utilisateur reussi avec succes !")
+            return redirect('agent_sanitaire_url')
+
+def delete_agent_sanitaire(request, id_agent):
+    if request.method == 'POST':
+        agent = Agent_sanitaire.objects.all().get(pk=id_agent)
+        users = agent.user
+        agent.delete()
+        users.delete()
+        messages.info(request, "La suppression est reussie avec succes !")
+        return redirect("agent_sanitaire_url")
+
+def edit_agent_sanitaire(request, id_agent):
+    agent = Agent_sanitaire.objects.values('id', 'nom', 'prenom', 'user__username', 'user__is_active', 'profil').get(pk=id_agent)
+    return render(request, "edit_agent_sanitaire.html", {'agent':agent})
+
+def chercher_agent_sanitaire(request):
+    if request.method == 'GET':
+        nom_chercher = request.GET.get('nom_chercher')
+        if len(nom_chercher) == 0:
+            messages.info(request, "Saisissez le nom à chercher svp !")
+            return redirect("agent_sanitaire_url")
+        else:
+            liste = Agent_sanitaire.objects.all().values('id', 'nom', 
+            'prenom', 'user__username', 'user__password', 'user__is_active', 'profil').filter(prenom=nom_chercher)
+            nbr = liste.count()
+            if nbr == 0:
+                messages.info(request, "Cet agent sanitaire n'existe pas dans le système ou verifier l'orthographe !")
+                return redirect("agent_sanitaire_url")
+            else:
+                return render(request, "agent_sanitaire.html", locals())
+
+def update_agent_sanitaire(request, id_agent):
+    if request.method == 'POST':
+        agent = Agent_sanitaire.objects.get(pk=id_agent)
+        agent.nom = request.POST.get('nom')
+        agent.prenom = request.POST.get('prenom')
+        agent.profil = request.POST.get('profil')
+        u = agent.user
+        u.is_active = request.POST.get('etat')
+        u.username = request.POST.get('username')
+        agent.save()
+        u.save()
+        messages.info(request, "La modification est reussie avec succes !")
+        return redirect("agent_sanitaire_url")
+
 #patient views
 def show_patient_charge_zone(request):
     zone = Zone.objects.all()
-    liste = Patient.objects.all().values('id', 'nom_pat', 'prenom_pat', 'groupe_sanguin', 'contact', 'zone__nom_zone', 'code')
+    liste = Patient.objects.values('id', 'nom_pat', 'prenom_pat', 'groupe_sanguin', 
+    'contact', 'zone__nom_zone', 'code')
     return render(request, "patient.html", locals())
 
 def ajouter_patient(request):
@@ -118,87 +190,68 @@ def update_patient(request, id_patient):
         messages.info(request, "La modification est reussie avec succes !")
         return redirect('patient_url')
 
-#agent_sanitaire  ou utilisateur views
-def show_agent_sanitaire(request):
-    liste = Agent_sanitaire.objects.all().values('id', 'nom', 
-    'prenom', 'user__username', 'user__password', 'user__is_active', 'profil')
-    return render(request, "agent_sanitaire.html", locals())
-
-def ajouter_agent_sanitaire(request):
-    if request.method == 'POST':
-        agent_nom = request.POST.get('nom')
-        agent_prenom = request.POST.get('prenom')
-        agent_username = request.POST.get('username')
-        agent_password = request.POST.get('password')
-        agent_etat = request.POST.get('etat')
-        agent_profil = request.POST.get('profil')
-        if len(agent_nom) == 0 or len(agent_prenom) == 0 or len(agent_username) == 0 or len(agent_password) == 0 or len(agent_etat) == 0 or len(agent_profil) == 0:
-            messages.info(request, "Completez tous les informations svp !")
-            return redirect("agent_sanitaire_url")
-        else:
-            try:
-                user = User.objects.create_user(username=agent_username, password=agent_password, is_active=agent_etat)
-            except IntegrityError :
-                messages.info(request, "Echec!! le username ou le mot de passe existe déjà !")
-                return redirect("agent_sanitaire_url")
-            agent = Agent_sanitaire(user = user, nom = agent_nom, prenom = agent_prenom, profil = agent_profil)
-            agent.save()
-            messages.info(request, "La creation d'un agent sanitaire ou utilisateur reussi avec succes !")
-            return redirect('agent_sanitaire_url')
-
-def delete_agent_sanitaire(request, id_agent):
-    if request.method == 'POST':
-        agent = Agent_sanitaire.objects.all().get(pk=id_agent)
-        users = agent.user
-        agent.delete()
-        users.delete()
-        messages.info(request, "La suppression est reussie avec succes !")
-        return redirect("agent_sanitaire_url")
-
-def edit_agent_sanitaire(request, id_agent):
-    agent = Agent_sanitaire.objects.values('id', 'nom', 'prenom', 'user__username', 'user__is_active', 'profil').get(pk=id_agent)
-    return render(request, "edit_agent_sanitaire.html", {'agent':agent})
-
-def chercher_agent_sanitaire(request):
-    if request.method == 'GET':
-        nom_chercher = request.GET.get('nom_chercher')
-        if len(nom_chercher) == 0:
-            messages.info(request, "Saisissez le nom à chercher svp !")
-            return redirect("agent_sanitaire_url")
-        else:
-            liste = Agent_sanitaire.objects.all().values('id', 'nom', 
-            'prenom', 'user__username', 'user__password', 'user__is_active', 'profil').filter(prenom=nom_chercher)
-            nbr = liste.count()
-            if nbr == 0:
-                messages.info(request, "Cet agent sanitaire n'existe pas dans le système ou verifier l'orthographe !")
-                return redirect("agent_sanitaire_url")
-            else:
-                return render(request, "agent_sanitaire.html", locals())
-
-def update_agent_sanitaire(request, id_agent):
-    if request.method == 'POST':
-        agent = Agent_sanitaire.objects.get(pk=id_agent)
-        agent.nom = request.POST.get('nom')
-        agent.prenom = request.POST.get('prenom')
-        agent.profil = request.POST.get('profil')
-        u = agent.user
-        u.is_active = request.POST.get('etat')
-        u.username = request.POST.get('username')
-        agent.save()
-        u.save()
-        messages.info(request, "La modification est reussie avec succes !")
-        return redirect("agent_sanitaire_url")
-
 #consultation view
 def show_consultation(request):
     patient = Patient.objects.all()
-    agent = Agent_sanitaire.objects.get(user_id=request.user.id)
+    print(".....",request.user.id)
+    agent = Agent_centre.objects.values('id', 'agent_sanitaire__nom', 
+    'agent_sanitaire__prenom').get(agent_sanitaire=request.user.id)
+    liste = Consultation.objects.values('id', 'patient__nom_pat', 
+    'patient__prenom_pat', 'patient__code', 'agent_centre__agent_sanitaire__nom', 
+    'agent_centre__agent_sanitaire__prenom', 'agent_centre__centre_sanitaire__nom_centre', 'date', 'traitement')
     return render(request, "consultation.html",locals())
 
-# def ajouter_consultation(request):
-#     if request.method == 'POST':
-#         agent = request.POST.get("agent")
-#         patient = request.POST.get("patient")
+def ajouter_consultation(request):
+    if request.method == 'POST':
+        agent = request.POST.get("agent")
+        patient = request.POST.get("patient")
+        traitement = request.POST.get("traitement")
+        dat = request.POST.get("dates")
+        if len(patient) == 0 or len(traitement) == 0:
+            messages.info(request, "Completez tous les informations svp !")
+            return redirect("consultation_url")
+        else:
+            consultation = Consultation(patient=Patient(patient), agent_centre=Agent_centre(agent), traitement=traitement, date=dat)
+            consultation.save()
+            messages.info(request, "Enregistrement reussi avec succes")
+            return redirect("consultation_url")
+
+def delete_consultation(request, id_consultation):
+    if request.method == 'POST':
+        consultation_obj = Consultation.objects.get(pk=id_consultation)
+        consultation_obj.delete()
+        messages.info(request, "La suppression est reussie avec succes!")
+        return redirect("consultation_url")
+
+def edit_consultation(request, id_consultation):
+    consultation = Consultation.objects.values('id', 'traitement').get(id=id_consultation)
+    return render(request, "edit_consultation.html", {'consultation':consultation})
+
+def update_consultation(request, id_consultation):
+    if request.method == 'POST':
+        consultation_obj = Consultation.objects.get(pk=id_consultation)
+        consultation_obj.traitement = request.POST.get("traitement")
+        consultation_obj.save()
+        messages.info(request, "La modification est reussie avec succes !")
+        return redirect("consultation_url")
+
+def chercher_consultation_par_patient(request):
+    if request.method == 'GET':
+        code_chercher = request.GET.get("code_chercher")
+        if  len(code_chercher) == 0:
+            messages.info(request, "Saisissez d'abord le code du patient à chercher")
+            return redirect("consultation_url")
+        else:
+            liste = Consultation.objects.value('id', 'patient__nom_pat', 
+            'patient__prenom_pat', 'patient__code', 'agent_centre__agent_sanitaire__nom', 
+            'agent_centre__agent_sanitaire__nom' 'agent_centre__centre_sanitaire__nom_centre', 
+            'date', 'traitement').filter(patient__code=code_chercher)
+            nbr = liste.count()
+            if nbr == 0:
+                messages.info("Cet patient n'a fait aucun consultation !")
+                return redirect("consultation_url")
+            else:
+                return render(request, "consultation.html", locals())
 
 #patient_allergie views
 def show_patient_allergie(request):
