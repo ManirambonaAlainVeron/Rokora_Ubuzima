@@ -41,7 +41,7 @@ def connexion(request):
 
 #agent_sanitaire  ou utilisateur views
 def show_agent_sanitaire(request):
-    liste = Agent_sanitaire.objects.all().values('id', 'nom', 
+    liste = Agent_sanitaire.objects.values('id', 'nom', 
     'prenom', 'user__username', 'user__password', 'user__is_active', 'profil')
     return render(request, "agent_sanitaire.html", locals())
 
@@ -69,7 +69,7 @@ def ajouter_agent_sanitaire(request):
 
 def delete_agent_sanitaire(request, id_agent):
     if request.method == 'POST':
-        agent = Agent_sanitaire.objects.all().get(pk=id_agent)
+        agent = Agent_sanitaire.objects.get(pk=id_agent)
         users = agent.user
         agent.delete()
         users.delete()
@@ -147,7 +147,7 @@ def chercher_par_code(request):
             messages.info(request, "Saisissez le code à chercher svp !")
             return redirect('patient_url')
         else:
-            liste = Patient.objects.all().values('id', 
+            liste = Patient.objects.values('id', 
             'nom_pat', 'prenom_pat', 'groupe_sanguin', 
             'contact', 'zone__nom_zone', 'code').filter(code = code_chercher)
             nbr = liste.count()
@@ -225,7 +225,6 @@ def delete_consultation(request, id_consultation):
 
 def edit_consultation(request, id_consultation):
     consultation = Consultation.objects.get(id=id_consultation)
-    print(".......",consultation.traitement)
     return render(request, "edit_consultation.html", {'consultation':consultation})
 
 def update_consultation(request, id_consultation):
@@ -258,7 +257,7 @@ def chercher_consultation_par_patient(request):
 def show_patient_allergie(request):
     patient = Patient.objects.all()
     allergie = Allergie.objects.all()
-    liste = Patient_allergie.objects.all().values('id',
+    liste = Patient_allergie.objects.values('id',
      'patient__nom_pat', 'patient__prenom_pat', 'patient__contact', 'patient__zone__nom_zone', 
      'patient__code', 'patient__groupe_sanguin', 'allergie__cause')
     return render(request, "patient_allergie.html", locals())
@@ -293,7 +292,7 @@ def chercher_par_allergie(request):
             messages.info(request, "Saisissez le nom de l'allergie à chercher svp !")
             return redirect('patient_allergie_url')
         else:
-            liste = Patient_allergie.objects.all().values('id',
+            liste = Patient_allergie.objects.values('id',
             'patient__nom_pat', 'patient__prenom_pat', 'patient__contact', 'patient__zone__nom_zone', 
             'patient__code', 'patient__groupe_sanguin', 'allergie__cause').filter(allergie__cause = all_cherch)
             nbr = liste.count()
@@ -311,7 +310,7 @@ def chercher_par_code_patient(request):
             return redirect('patient_allergie_url')
         else:
             print(pat_cherch)
-            liste = Patient_allergie.objects.all().values('id',
+            liste = Patient_allergie.objects.values('id',
             'patient__nom_pat', 'patient__prenom_pat', 'patient__contact', 'patient__zone__nom_zone', 
             'patient__code', 'patient__groupe_sanguin', 'allergie__cause').filter(patient__code = pat_cherch)
             nbr = liste.count()
@@ -375,7 +374,7 @@ def chercher_province(request):
 def show_patient_maladie_chronique(request):
     patient = Patient.objects.all()
     maladie = Maladie_chronique.objects.all()
-    liste = Patient_chronique.objects.all().values('id',
+    liste = Patient_chronique.objects.values('id',
             'patient__nom_pat', 'patient__prenom_pat', 'patient__contact', 'patient__zone__nom_zone', 
             'patient__code', 'patient__groupe_sanguin', 'maladie_chronique__nom_maladie')
     return render(request, "patient_maladie_chronique.html", locals())
@@ -424,7 +423,7 @@ def chercher_patient_maladie_chronique(request):
             messages.info(request, "Saisissez le nom de la maladie à chercher svp !")
             return redirect('patient_maladie_chronique_url')
         else:
-            liste = Patient_chronique.objects.all().values('id',
+            liste = Patient_chronique.objects.values('id',
             'patient__nom_pat', 'patient__prenom_pat', 'patient__contact', 'patient__zone__nom_zone', 
             'patient__code', 'patient__groupe_sanguin', 'maladie_chronique__nom_maladie').filter(maladie_chronique__nom_maladie=mal_cherch)
             nbr = liste.count()
@@ -438,7 +437,7 @@ def chercher_patient_maladie_chronique(request):
 def show_agent_centre(request):
     agent = Agent_sanitaire.objects.all().values('id', 'nom', 'prenom', 'user__username' ,'profil')
     centre = Centre_sanitaire.objects.all()
-    liste = Agent_centre.objects.all().values('id', 'agent_sanitaire__nom', 
+    liste = Agent_centre.objects.values('id', 'agent_sanitaire__nom', 
     'agent_sanitaire__prenom', 'agent_sanitaire__profil', 'agent_sanitaire__user__username','centre_sanitaire__nom_centre')
     return render(request, "agent_centre.html", locals())
 
@@ -498,7 +497,7 @@ def chercher_agent_centre_par_prenom(request):
 #commune view
 def show_commune_and_charge_select(request):
     select_province = Province.objects.all()
-    liste = Commune.objects.all().values('id','province__nom_province','nom_commune')
+    liste = Commune.objects.values('id','province__nom_province','nom_commune')
     return render(request, "commune.html",locals())
 
 def chercher_commune_province(request):
@@ -508,7 +507,7 @@ def chercher_commune_province(request):
             messages.info(request, "Saisissez le nom de la province que vous chercher svp !")
             return redirect('commune_url')
         else:
-            liste = Commune.objects.all().values('id','province__nom_province','nom_commune').filter(province__nom_province=nom)
+            liste = Commune.objects.values('id','province__nom_province','nom_commune').filter(province__nom_province=nom)
             nbr = liste.count()
             if nbr == 0:
                 messages.info(request, "La province ne contient aucune commune dans le system ou verifier l'orthographe svp !")
@@ -523,7 +522,7 @@ def chercher_commune(request):
             messages.info(request, "Saisissez le nom de la commune à chercher svp !")
             return redirect('commune_url')
         else:
-            liste = Commune.objects.all().values('id','province__nom_province','nom_commune').filter(nom_commune=nom)
+            liste = Commune.objects.values('id','province__nom_province','nom_commune').filter(nom_commune=nom)
             nbr = liste.count()
             if nbr == 0:
                 messages.info(request, "La commune n'existe pas dans le system ou verifier l'orthographe svp !")
@@ -568,7 +567,7 @@ def update_commune(request, id_commune):
 #zone views
 def show_zone_charge_select(request):
     select_commune = Commune.objects.all()
-    liste =  Zone.objects.all().values('id', 'commune__nom_commune', 'nom_zone')
+    liste =  Zone.objects.values('id', 'commune__nom_commune', 'nom_zone')
     return render(request, "zone.html", locals())
 
 def ajouter_zone(request):
@@ -612,7 +611,7 @@ def chercher_zone_commune(request):
             messages.info(request, "Saisissez le nom de la commune à chercher")
             return redirect("zone_url")
         else:
-            liste = Zone.objects.all().values('id', 'commune__nom_commune', 'nom_zone').filter(commune_nom_commune=nom)
+            liste = Zone.objects.values('id', 'commune__nom_commune', 'nom_zone').filter(commune__nom_commune=nom)
             nbr = liste.count()
             if nbr == 0:
                 messages.info(request, "La zone que vous cherchez n'exitse dans le systeme ou verifiez l'orthographe !")
@@ -627,7 +626,7 @@ def chercher_zone(request):
             messages.info(request, "Saisissez le nom du zone à chercher")
             return redirect("zone_url")
         else:
-            liste = Zone.objects.all().values('id', 'commune__nom_commune', 'nom_zone').filter(nom_zone=nom)
+            liste = Zone.objects.values('id', 'commune__nom_commune', 'nom_zone').filter(nom_zone=nom)
             nbr = liste.count()
             if nbr == 0:
                 messages.info(request, "La commune ne contient aucune zone dans le système ou verifier l'orthographe svp !")
