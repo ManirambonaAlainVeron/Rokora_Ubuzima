@@ -4,14 +4,14 @@
         
         <div class="modal-dialog">
             <div class="modal-content" id="cont">
-                <form action="{% url 'update_consultation' consultation.id %}" method="POST" id="ense">
+                <form action="{% url 'update_consultation_url' consultation.id %}" method="POST" id="ense">
                     {% csrf_token %}
                                 <div class="modal-header">
                                     <h5 class="modal-title">Mettre à jour le traitement</h5>
                                 </div>
                                 <div class="modal-body">
                                     <label for="my-textarea">Traitement en cours :</label>
-                                    <textarea id="my-textarea" class="form-control" name="traitement" value="{{consultation.traitement}}" rows="5"></textarea> </br>
+                                    <textarea id="my-textarea" class="form-control" name="traitement" rows="5">{{consultation.traitement}}</textarea> </br>
                                 </div>
                                 <div class="modal-footer">
                                     <a  class="btn btn-default"  href="{% url 'consultation_url' %}">Close</a>

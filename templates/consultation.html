@@ -23,7 +23,7 @@
                 <div style="margin-left: 30px;" >
                         <label for="agent">Agent sanitaire</label>
                         <select class="form-control ml-5 col-md-4 chosen" name="agent"  id="agent">
-                            <option value="{{agent.id}}" selected>{{ agent.nom }} {{agent.prenom}}</option>
+                            <option value="{{agent.id}}" selected>{{ agent.agent_sanitaire__nom }} {{agent.agent_sanitaire__prenom}}</option>
                         </select>
                 </div>
                 <label for="patient">Patient :</label>
@@ -48,41 +48,41 @@
         </div>
     </form>
     <div class="scrollable  mt-5">
-            <table class="table table-bordered table-condense ">
+            <table class="table table-bordered table-condense " style="table-layout: fixed; word-wrap: break-word;">
                 <thead>
                     <tr >
-                        <th >ID</th>
-                        <th >Nom patient</th>
-                        <th >Prenom patient</th>
-                        <th >Code patient</th>
-                        <th >Nom agent</th>
-                        <th >Prenom agent</th>
-                        <th >Centre sanitaire</th>
-                        <th >Date</th>
+                        <th style="width: 5%" >ID</th>
+                        <th style="width: 10%;">Nom patient</th>
+                        <th style="width: 8%;">Prenom patient</th>
+                        <th style="width: 6%;">Code patient</th>
+                        <th style="width: 10%;">Nom agent</th>
+                        <th style="width: 8%;">Prenom agent</th>
+                        <th style="width: 10%;">Centre sanitaire</th>
+                        <th style="width: 5%;">Date</th>
                         <th >Traitement</th>
-                        <th colspan="2" ></th>
+                        <th colspan="2" style="width: 8%;"></th>
                     </tr>
                 </thead>
                 <tbody >
                     
                     {% for item in liste  %}
-                        <tr >
-                            <td style="width: 100px;">{{item.id}}</td>
+                        <tr style="line-height: 20px;min-height: 20px;height: 20px;">
+                            <td >{{item.id}}</td>
                             <td >{{item.patient__nom_pat}}</td>
                             <td >{{item.patient__prenom_pat}}</td>
-                            <td >{{item.patient__contact}}</td>
-                            <td >{{item.patient__zone__nom_zone}}</td>
                             <td >{{item.patient__code}}</td>
-                            <td >{{item.patient__groupe_sanguin}}</td>
-                            <td >{{item.allergie__cause}}</td>
-                            <td >{{item.allergie__cause}}</td>
-                            <td style="width: 50px;">
+                            <td >{{item.agent_centre__agent_sanitaire__nom}}</td>
+                            <td >{{item.agent_centre__agent_sanitaire__prenom}}</td>
+                            <td >{{item.agent_centre__centre_sanitaire__nom_centre}}</td>
+                            <td >{{item.date}}</td>
+                            <td >{{item.traitement}}</td>
+                            <td >
                                 <form action="delete_consultation/{{ item.id }}" method="POST">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-danger btn-sm" >Del</button>
                                 </form>
                             </td>
-                            <td style="width: 50px;">
+                            <td>
                                 <form action="edit_consultation/{{ item.id }}" method="POST">
                                     {% csrf_token %}
                                     <button type="submit" id="edit" class="btn btn-warning btn-sm">Edit</button>

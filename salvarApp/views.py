@@ -195,7 +195,7 @@ def show_consultation(request):
     patient = Patient.objects.all()
     print(".....",request.user.id)
     agent = Agent_centre.objects.values('id', 'agent_sanitaire__nom', 
-    'agent_sanitaire__prenom').get(agent_sanitaire=request.user.id)
+    'agent_sanitaire__prenom').get(agent_sanitaire__user__id=request.user.id)
     liste = Consultation.objects.values('id', 'patient__nom_pat', 
     'patient__prenom_pat', 'patient__code', 'agent_centre__agent_sanitaire__nom', 
     'agent_centre__agent_sanitaire__prenom', 'agent_centre__centre_sanitaire__nom_centre', 'date', 'traitement')
@@ -224,7 +224,8 @@ def delete_consultation(request, id_consultation):
         return redirect("consultation_url")
 
 def edit_consultation(request, id_consultation):
-    consultation = Consultation.objects.values('id', 'traitement').get(id=id_consultation)
+    consultation = Consultation.objects.get(id=id_consultation)
+    print(".......",consultation.traitement)
     return render(request, "edit_consultation.html", {'consultation':consultation})
 
 def update_consultation(request, id_consultation):
@@ -242,13 +243,13 @@ def chercher_consultation_par_patient(request):
             messages.info(request, "Saisissez d'abord le code du patient à chercher")
             return redirect("consultation_url")
         else:
-            liste = Consultation.objects.value('id', 'patient__nom_pat', 
+            liste = Consultation.objects.values('id', 'patient__nom_pat', 
             'patient__prenom_pat', 'patient__code', 'agent_centre__agent_sanitaire__nom', 
-            'agent_centre__agent_sanitaire__nom' 'agent_centre__centre_sanitaire__nom_centre', 
+            'agent_centre__agent_sanitaire__prenom', 'agent_centre__centre_sanitaire__nom_centre',
             'date', 'traitement').filter(patient__code=code_chercher)
             nbr = liste.count()
             if nbr == 0:
-                messages.info("Cet patient n'a fait aucun consultation !")
+                messages.info(request, "Cet patient n'a fait aucun consultation !")
                 return redirect("consultation_url")
             else:
                 return render(request, "consultation.html", locals())
