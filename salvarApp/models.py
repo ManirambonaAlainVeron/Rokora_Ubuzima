@@ -60,7 +60,23 @@ class Allergie(models.Model):
         db_table = 'Allergie'
 
 
+class Centre_sanitaire(models.Model):
+    nom_centre = models.CharField(max_length=50)
+
+    class Meta:
+        db_table = 'Centre_sanitaire'
+
+            
+class Agent_centre(models.Model):
+    agent_sanitaire = models.ForeignKey(Agent_sanitaire, on_delete=models.CASCADE)
+    centre_sanitaire = models.ForeignKey(Centre_sanitaire, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'Agent_centre'
+
+
 class Patient_allergie(models.Model):
+    agent_centre = models.ForeignKey(Agent_centre, on_delete=models.CASCADE)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     allergie = models.ForeignKey(Allergie, on_delete=models.CASCADE)
 
@@ -69,26 +85,12 @@ class Patient_allergie(models.Model):
 
 
 class Patient_chronique(models.Model):
+    agent_centre = models.ForeignKey(Agent_centre, on_delete=models.CASCADE)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     maladie_chronique = models.ForeignKey('Maladie_chronique', on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'Patient_chronique'
-
-
-class Centre_sanitaire(models.Model):
-    nom_centre = models.CharField(max_length=50)
-
-    class Meta:
-        db_table = 'Centre_sanitaire'
-
-
-class Agent_centre(models.Model):
-    agent_sanitaire = models.ForeignKey(Agent_sanitaire, on_delete=models.CASCADE)
-    centre_sanitaire = models.ForeignKey(Centre_sanitaire, on_delete=models.CASCADE)
-
-    class Meta:
-        db_table = 'Agent_centre'
 
 
 class Consultation(models.Model):

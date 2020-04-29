@@ -13,6 +13,7 @@ urlpatterns = [
     path('update_patient/<int:id_patient>', views.update_patient, name='update_patient_url'),
     path('chercher_code', views.chercher_par_code, name='chercher_code_url'),
     path('chercher_groupe', views.chercher_par_sanguin, name='chercher_sanguin_url'),
+    path('chercher_patient_par_zone', views.chercher_patient_par_zone ,name='chercher_patient_par_zone_url'),
 
     # consultation_url
     path('consultation', views.show_consultation, name='consultation_url'),

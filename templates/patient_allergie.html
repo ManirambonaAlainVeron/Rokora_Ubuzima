@@ -26,7 +26,9 @@
     <form method="POST" action="ajouter_patient_allergie" class="form-inline" id="id_form">
         {% csrf_token %}
         <div class="form-row align-items-center mt-5 col-md-10">
-            
+                 <select class="form-control ml-3 col-md-4 chosen" name="select_agent"  id="select_agent">
+                    <option value="{{agent.id}}" selected>{{ agent.agent_sanitaire__nom }} {{agent.agent_sanitaire__prenom}}  ===>  {{agent.centre_sanitaire__nom_centre}}</option>
+                 </select>
                 <select class="form-control ml-3 col-md-4 chosen" name="select_pat"  id="select_pat">
                     <option value="">Selectionnez le patient</option>
                     {% for item in patient %}
@@ -55,8 +57,7 @@
                 <thead>
                     <tr >
                         <th >ID</th>
-                        <th >Nom</th>
-                        <th >Prenom</th>
+                        <th >Patient</th>
                         <th >Contact</th>
                         <th >Zone</th>
                         <th >Code</th>
@@ -70,8 +71,7 @@
                     {% for item in liste  %}
                         <tr >
                             <td style="width: 100px;">{{item.id}}</td>
-                            <td >{{item.patient__nom_pat}}</td>
-                            <td >{{item.patient__prenom_pat}}</td>
+                            <td >{{item.patient__nom_pat}} {{item.patient__prenom_pat}}</td>
                             <td >{{item.patient__contact}}</td>
                             <td >{{item.patient__zone__nom_zone}}</td>
                             <td >{{item.patient__code}}</td>

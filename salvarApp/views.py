@@ -164,13 +164,31 @@ def chercher_par_sanguin(request):
             messages.info(request, "Selectionnez le groupe sanguin à chercher svp !")
             return redirect('patient_url')
         else:
-            liste = Patient.objects.all().values('id', 'nom_pat', 
+            liste = Patient.objects.values('id', 'nom_pat', 
             'prenom_pat', 'groupe_sanguin', 'contact', 'zone__nom_zone',
              'code').filter(groupe_sanguin  = groupe_chercher)
             nbr_patient = liste.count()
             if nbr_patient == 0:
                 messages.info(request, "Aucun patient trouvé qui a ce groupe sanguin !")
                 return redirect('patient_url')
+            else:
+                return render(request, "patient.html", locals())
+
+def chercher_patient_par_zone(request):
+    if request.method == 'GET':
+        zone_chercher = request.GET.get("zone_chercher")
+        if len(zone_chercher) == 0:
+            messages.info(request, "Selectionnez le zone à chercher svp !")
+            return redirect("patient_url")
+        else:
+            liste = Patient.objects.values('id', 'nom_pat', 
+            'prenom_pat', 'groupe_sanguin', 'contact', 'zone__nom_zone',
+             'code').filter(zone__nom_zone=zone_chercher)
+            print("....",liste)
+            nbr = liste.count()
+            if nbr == 0:
+                messages.info(request, "La zone cherchée ne contient aucun patient enregistrer !")
+                return redirect("patient_url")
             else:
                 return render(request, "patient.html", locals())
 
@@ -255,6 +273,8 @@ def chercher_consultation_par_patient(request):
 
 #patient_allergie views
 def show_patient_allergie(request):
+    agent = Agent_centre.objects.values('id', 'agent_sanitaire__nom', 
+    'agent_sanitaire__prenom', 'centre_sanitaire__nom_centre').get(agent_sanitaire__user__id=request.user.id)
     patient = Patient.objects.all()
     allergie = Allergie.objects.all()
     liste = Patient_allergie.objects.values('id',
@@ -372,6 +392,8 @@ def chercher_province(request):
 
 #patient_maladie_chronique_view
 def show_patient_maladie_chronique(request):
+    agent = Agent_centre.objects.values('id', 'agent_sanitaire__nom', 
+    'agent_sanitaire__prenom', 'centre_sanitaire__nom_centre').get(agent_sanitaire__user__id=request.user.id)
     patient = Patient.objects.all()
     maladie = Maladie_chronique.objects.all()
     liste = Patient_chronique.objects.values('id',

@@ -23,7 +23,7 @@
                 <div style="margin-left: 30px;" >
                         <label for="agent">Agent sanitaire</label>
                         <select class="form-control ml-5 col-md-4 chosen" name="agent"  id="agent">
-                            <option value="{{agent.id}}" selected>{{ agent.agent_sanitaire__nom }} {{agent.agent_sanitaire__prenom}}</option>
+                            <option value="{{agent.id}}" selected>{{ agent.agent_sanitaire__nom }} {{agent.agent_sanitaire__prenom}}  ===>  {{agent.centre_sanitaire__nom_centre}}</option>
                         </select>
                 </div>
                 <label for="patient">Patient :</label>
@@ -52,11 +52,9 @@
                 <thead>
                     <tr >
                         <th style="width: 5%" >ID</th>
-                        <th style="width: 10%;">Nom patient</th>
-                        <th style="width: 8%;">Prenom patient</th>
-                        <th style="width: 6%;">Code patient</th>
-                        <th style="width: 10%;">Nom agent</th>
-                        <th style="width: 8%;">Prenom agent</th>
+                        <th style="width: 15%;">Patient</th>
+                        <th style="width: 8%;">Code patient</th>
+                        <th style="width: 15%;">Agent sanitaire</th>
                         <th style="width: 10%;">Centre sanitaire</th>
                         <th style="width: 5%;">Date</th>
                         <th >Traitement</th>
@@ -68,11 +66,9 @@
                     {% for item in liste  %}
                         <tr style="line-height: 20px;min-height: 20px;height: 20px;">
                             <td >{{item.id}}</td>
-                            <td >{{item.patient__nom_pat}}</td>
-                            <td >{{item.patient__prenom_pat}}</td>
+                            <td >{{item.patient__nom_pat}} {{item.patient__prenom_pat}}</td>
                             <td >{{item.patient__code}}</td>
-                            <td >{{item.agent_centre__agent_sanitaire__nom}}</td>
-                            <td >{{item.agent_centre__agent_sanitaire__prenom}}</td>
+                            <td >{{item.agent_centre__agent_sanitaire__nom}} {{item.agent_centre__agent_sanitaire__prenom}}</td>
                             <td >{{item.agent_centre__centre_sanitaire__nom_centre}}</td>
                             <td >{{item.date}}</td>
                             <td >{{item.traitement}}</td>
@@ -98,6 +94,8 @@
                 </tbody>
             </table>
     </div>
+    <a href="{% url 'patient_allergie_url' %}">patient_allergie</a>
+    <a href="{% url 'patient_maladie_chronique_url' %}">patient_maladie</a>
 {% endblock %}
 {% block javascript %}
     <script type="text/javascript">
