@@ -110,6 +110,69 @@ def update_agent_sanitaire(request, id_agent):
         messages.info(request, "La modification est reussie avec succes !")
         return redirect("agent_sanitaire_url")
 
+#consultation view
+def show_consultation(request):
+    patient = Patient.objects.all()
+    print(".....",request.user.id)
+    agent = Agent_centre.objects.values('id', 'agent_sanitaire__nom', 
+    'agent_sanitaire__prenom').get(agent_sanitaire__user__id=request.user.id)
+    liste = Consultation.objects.values('id', 'patient__nom_pat', 
+    'patient__prenom_pat', 'patient__code', 'agent_centre__agent_sanitaire__nom', 
+    'agent_centre__agent_sanitaire__prenom', 'agent_centre__centre_sanitaire__nom_centre', 'date', 'traitement')
+    return render(request, "consultation.html",locals())
+
+def ajouter_consultation(request):
+    if request.method == 'POST':
+        agent = request.POST.get("agent")
+        patient = request.POST.get("patient")
+        traitement = request.POST.get("traitement")
+        dat = request.POST.get("dates")
+        if len(patient) == 0 or len(traitement) == 0:
+            messages.info(request, "Completez tous les informations svp !")
+            return redirect("consultation_url")
+        else:
+            consultation = Consultation(patient=Patient(patient), agent_centre=Agent_centre(agent), traitement=traitement, date=dat)
+            consultation.save()
+            messages.info(request, "Enregistrement reussi avec succes")
+            return redirect("consultation_url")
+
+def delete_consultation(request, id_consultation):
+    if request.method == 'POST':
+        consultation_obj = Consultation.objects.get(pk=id_consultation)
+        consultation_obj.delete()
+        messages.info(request, "La suppression est reussie avec succes!")
+        return redirect("consultation_url")
+
+def edit_consultation(request, id_consultation):
+    consultation = Consultation.objects.get(id=id_consultation)
+    return render(request, "edit_consultation.html", {'consultation':consultation})
+
+def update_consultation(request, id_consultation):
+    if request.method == 'POST':
+        consultation_obj = Consultation.objects.get(pk=id_consultation)
+        consultation_obj.traitement = request.POST.get("traitement")
+        consultation_obj.save()
+        messages.info(request, "La modification est reussie avec succes !")
+        return redirect("consultation_url")
+
+def chercher_consultation_par_patient(request):
+    if request.method == 'GET':
+        code_chercher = request.GET.get("code_chercher")
+        if  len(code_chercher) == 0:
+            messages.info(request, "Saisissez d'abord le code du patient à chercher")
+            return redirect("consultation_url")
+        else:
+            liste = Consultation.objects.values('id', 'patient__nom_pat', 
+            'patient__prenom_pat', 'patient__code', 'agent_centre__agent_sanitaire__nom', 
+            'agent_centre__agent_sanitaire__prenom', 'agent_centre__centre_sanitaire__nom_centre',
+            'date', 'traitement').filter(patient__code=code_chercher)
+            nbr = liste.count()
+            if nbr == 0:
+                messages.info(request, "Cet patient n'a fait aucun consultation !")
+                return redirect("consultation_url")
+            else:
+                return render(request, "consultation.html", locals())
+
 #patient views
 def show_patient_charge_zone(request):
     zone = Zone.objects.all()
@@ -207,69 +270,6 @@ def update_patient(request, id_patient):
         p.save()
         messages.info(request, "La modification est reussie avec succes !")
         return redirect('patient_url')
-
-#consultation view
-def show_consultation(request):
-    patient = Patient.objects.all()
-    print(".....",request.user.id)
-    agent = Agent_centre.objects.values('id', 'agent_sanitaire__nom', 
-    'agent_sanitaire__prenom').get(agent_sanitaire__user__id=request.user.id)
-    liste = Consultation.objects.values('id', 'patient__nom_pat', 
-    'patient__prenom_pat', 'patient__code', 'agent_centre__agent_sanitaire__nom', 
-    'agent_centre__agent_sanitaire__prenom', 'agent_centre__centre_sanitaire__nom_centre', 'date', 'traitement')
-    return render(request, "consultation.html",locals())
-
-def ajouter_consultation(request):
-    if request.method == 'POST':
-        agent = request.POST.get("agent")
-        patient = request.POST.get("patient")
-        traitement = request.POST.get("traitement")
-        dat = request.POST.get("dates")
-        if len(patient) == 0 or len(traitement) == 0:
-            messages.info(request, "Completez tous les informations svp !")
-            return redirect("consultation_url")
-        else:
-            consultation = Consultation(patient=Patient(patient), agent_centre=Agent_centre(agent), traitement=traitement, date=dat)
-            consultation.save()
-            messages.info(request, "Enregistrement reussi avec succes")
-            return redirect("consultation_url")
-
-def delete_consultation(request, id_consultation):
-    if request.method == 'POST':
-        consultation_obj = Consultation.objects.get(pk=id_consultation)
-        consultation_obj.delete()
-        messages.info(request, "La suppression est reussie avec succes!")
-        return redirect("consultation_url")
-
-def edit_consultation(request, id_consultation):
-    consultation = Consultation.objects.get(id=id_consultation)
-    return render(request, "edit_consultation.html", {'consultation':consultation})
-
-def update_consultation(request, id_consultation):
-    if request.method == 'POST':
-        consultation_obj = Consultation.objects.get(pk=id_consultation)
-        consultation_obj.traitement = request.POST.get("traitement")
-        consultation_obj.save()
-        messages.info(request, "La modification est reussie avec succes !")
-        return redirect("consultation_url")
-
-def chercher_consultation_par_patient(request):
-    if request.method == 'GET':
-        code_chercher = request.GET.get("code_chercher")
-        if  len(code_chercher) == 0:
-            messages.info(request, "Saisissez d'abord le code du patient à chercher")
-            return redirect("consultation_url")
-        else:
-            liste = Consultation.objects.values('id', 'patient__nom_pat', 
-            'patient__prenom_pat', 'patient__code', 'agent_centre__agent_sanitaire__nom', 
-            'agent_centre__agent_sanitaire__prenom', 'agent_centre__centre_sanitaire__nom_centre',
-            'date', 'traitement').filter(patient__code=code_chercher)
-            nbr = liste.count()
-            if nbr == 0:
-                messages.info(request, "Cet patient n'a fait aucun consultation !")
-                return redirect("consultation_url")
-            else:
-                return render(request, "consultation.html", locals())
 
 #patient_allergie views
 def show_patient_allergie(request):
