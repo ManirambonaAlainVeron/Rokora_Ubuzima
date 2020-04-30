@@ -36,7 +36,7 @@
                 {% endfor %}
             </select>
             <select class="form-control ml-3 col-md-4 chosen" name="select_maladie"  id="select_maladie">
-                <option value="">Selectionnez l'allergie</option>
+                <option value="">Selectionnez la maladie</option>
                 {% for item in maladie %}
                   <option value="{{item.id}}" >{{item.nom_maladie}}</option>
                 {% endfor %}
@@ -47,7 +47,7 @@
     <div class="scrollable  mt-5">
         
         {% if nbr %}             
-            <h4>{{nbr}} personne{{nbr|pluralize}}</h4>
+            <h4>Resultat{{nbr|pluralize}} = {{nbr}}</h4>
         {% endif %}
 
             <table class="table table-bordered table-condense ">
@@ -60,6 +60,8 @@
                         <th >Code</th>
                         <th >Groupe Sanguin</th>
                         <th >Maladie Chronique</th>
+                        <th >Agent sanitaire</th>
+                        <th >Centre sanitaire</th>
                         <th ></th>
                     </tr>
                 </thead>
@@ -74,6 +76,8 @@
                             <td >{{item.patient__code}}</td>
                             <td >{{item.patient__groupe_sanguin}}</td>
                             <td >{{item.maladie_chronique__nom_maladie}}</td>
+                            <td >{{item.agent_centre__agent_sanitaire__nom}} {{item.agent_centre__agent_sanitaire__nom}}</td>
+                            <td >{{item.agent_centre__centre_sanitaire__nom_centre}}</td>
                             <td style="width: 50px;">
                                 <form action="delete_patient_maladie_chronique/{{ item.id }}" method="POST">
                                     {% csrf_token %}

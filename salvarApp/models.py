@@ -97,7 +97,7 @@ class Consultation(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     agent_centre = models.ForeignKey(Agent_centre, on_delete=models.CASCADE)
     date = models.DateField(auto_now=True)
-    traitement = models.TextField()
+    traitement = models.TextField(default='Pas des traitements en cours')
 
     class Meta:
         db_table = 'Consultation'

@@ -113,12 +113,11 @@ def update_agent_sanitaire(request, id_agent):
 #consultation view
 def show_consultation(request):
     patient = Patient.objects.all()
-    print(".....",request.user.id)
     agent = Agent_centre.objects.values('id', 'agent_sanitaire__nom', 
     'agent_sanitaire__prenom').get(agent_sanitaire__user__id=request.user.id)
     liste = Consultation.objects.values('id', 'patient__nom_pat', 
     'patient__prenom_pat', 'patient__code', 'agent_centre__agent_sanitaire__nom', 
-    'agent_centre__agent_sanitaire__prenom', 'agent_centre__centre_sanitaire__nom_centre', 'date', 'traitement')
+    'agent_centre__agent_sanitaire__prenom', 'agent_centre__centre_sanitaire__nom_centre', 'date', 'traitement').order_by('-date')
     return render(request, "consultation.html",locals())
 
 def ajouter_consultation(request):
@@ -127,7 +126,7 @@ def ajouter_consultation(request):
         patient = request.POST.get("patient")
         traitement = request.POST.get("traitement")
         dat = request.POST.get("dates")
-        if len(patient) == 0 or len(traitement) == 0:
+        if len(patient) == 0:
             messages.info(request, "Completez tous les informations svp !")
             return redirect("consultation_url")
         else:
@@ -165,13 +164,32 @@ def chercher_consultation_par_patient(request):
             liste = Consultation.objects.values('id', 'patient__nom_pat', 
             'patient__prenom_pat', 'patient__code', 'agent_centre__agent_sanitaire__nom', 
             'agent_centre__agent_sanitaire__prenom', 'agent_centre__centre_sanitaire__nom_centre',
-            'date', 'traitement').filter(patient__code=code_chercher)
+            'date', 'traitement').filter(patient__code=code_chercher).order_by('-date')
             nbr = liste.count()
             if nbr == 0:
                 messages.info(request, "Cet patient n'a fait aucun consultation !")
                 return redirect("consultation_url")
             else:
                 return render(request, "consultation.html", locals())
+
+#information_views:
+def show_chercher_info(request):
+    return render(request, "chercher_info.html")
+
+def afficher_information(request):
+    code_cherche = request.GET.get('code_chercher')
+    if len(code) == 0:
+        messages.info(request, "Saisissez le code à chercher s'il vous plait !")
+        return redirect("chercher_information_url")
+    else:
+        patient = Patient.objects.values('nom_pat','prenom_pat','contact',
+        'group_sanguin','zone__nom_zone', 'zone__commune__nom_commune', 
+        'zone__commune__province__nom_province').get(code=code_cherche)
+        patient_allergie = Patient_allergie.objects.values('allergie__cause').filter(patient__code=code_cherche)
+        patient_maladie = Patient_chronique.objects.values('maladie_chronique__nom_maladie').filter(patient__code=code_cherche)
+        # demain.....
+        return render(request, "afficher_info.html", locals())
+
 
 #patient views
 def show_patient_charge_zone(request):
@@ -279,11 +297,14 @@ def show_patient_allergie(request):
     allergie = Allergie.objects.all()
     liste = Patient_allergie.objects.values('id',
      'patient__nom_pat', 'patient__prenom_pat', 'patient__contact', 'patient__zone__nom_zone', 
-     'patient__code', 'patient__groupe_sanguin', 'allergie__cause')
+     'patient__code', 'patient__groupe_sanguin', 'allergie__cause', 
+     'agent_centre__agent_sanitaire__nom', 'agent_centre__agent_sanitaire__prenom', 
+     'agent_centre__centre_sanitaire__nom_centre')
     return render(request, "patient_allergie.html", locals())
 
 def ajouter_patient_allergie(request):
     if request.method == 'POST':
+        agent = request.POST.get('select_agent')
         p = request.POST.get('select_pat')
         a = request.POST.get('select_all')
         if len(p) == 0 or len(a) == 0:
@@ -291,7 +312,7 @@ def ajouter_patient_allergie(request):
             return redirect('patient_allergie_url')
         else:
             try:
-                pat_all = Patient_allergie(patient = Patient(p), allergie = Allergie(a))
+                pat_all = Patient_allergie(agent_centre = Agent_centre(agent), patient = Patient(p), allergie = Allergie(a))
                 pat_all.save()
             except AttributeError:
                 pass
@@ -314,7 +335,9 @@ def chercher_par_allergie(request):
         else:
             liste = Patient_allergie.objects.values('id',
             'patient__nom_pat', 'patient__prenom_pat', 'patient__contact', 'patient__zone__nom_zone', 
-            'patient__code', 'patient__groupe_sanguin', 'allergie__cause').filter(allergie__cause = all_cherch)
+            'patient__code', 'patient__groupe_sanguin', 'allergie__cause', 
+            'agent_centre__agent_sanitaire__nom', 'agent_centre__agent_sanitaire__prenom', 
+            'agent_centre__centre_sanitaire__nom_centre').filter(allergie__cause = all_cherch)
             nbr = liste.count()
             if nbr == 0:
                 messages.info(request, "Pas du patient qui a cette allergie ou verifier l'orthographe !")
@@ -332,9 +355,11 @@ def chercher_par_code_patient(request):
             print(pat_cherch)
             liste = Patient_allergie.objects.values('id',
             'patient__nom_pat', 'patient__prenom_pat', 'patient__contact', 'patient__zone__nom_zone', 
-            'patient__code', 'patient__groupe_sanguin', 'allergie__cause').filter(patient__code = pat_cherch)
-            nbr = liste.count()
-            if nbr == 0:
+            'patient__code', 'patient__groupe_sanguin', 'allergie__cause', 
+            'agent_centre__agent_sanitaire__nom', 'agent_centre__agent_sanitaire__prenom', 
+            'agent_centre__centre_sanitaire__nom_centre').filter(patient__code = pat_cherch)
+            nbre = liste.count()
+            if nbre == 0:
                 messages.info(request, "Cet patient n'a pas d'allergie ou verifier l'orthographe !")
                 return redirect('patient_allergie_url')
             else:
@@ -398,18 +423,21 @@ def show_patient_maladie_chronique(request):
     maladie = Maladie_chronique.objects.all()
     liste = Patient_chronique.objects.values('id',
             'patient__nom_pat', 'patient__prenom_pat', 'patient__contact', 'patient__zone__nom_zone', 
-            'patient__code', 'patient__groupe_sanguin', 'maladie_chronique__nom_maladie')
+            'patient__code', 'patient__groupe_sanguin', 'maladie_chronique__nom_maladie', 
+            'agent_centre__agent_sanitaire__nom', 'agent_centre__agent_sanitaire__prenom', 
+            'agent_centre__centre_sanitaire__nom_centre')
     return render(request, "patient_maladie_chronique.html", locals())
 
 def ajouter_patient_maladie_chronique(request):
     if request.method == 'POST':
         p = request.POST.get('select_pat')
         m = request.POST.get('select_maladie')
+        a = request.POST.get('select_agent')
         if len(p) == 0 or len(m) == 0:
             messages.info(request, "Selectionnez le patient et la maladie chronique svp !")
             return redirect('patient_maladie_chronique_url')
         else:
-            pat_mal = Patient_chronique(patient = Patient(p), maladie_chronique = Maladie_chronique(m))
+            pat_mal = Patient_chronique(agent_centre = Agent_centre(a), patient = Patient(p), maladie_chronique = Maladie_chronique(m))
             pat_mal.save()
             messages.info(request, "Enregistrement reussi avec succes !")
             return redirect('patient_maladie_chronique_url')
@@ -424,15 +452,17 @@ def delete_patient_maladie_chronique(request, id_pat_mal):
 def chercher_patient_maladie_chronique_code(request):
     if request.method == 'GET':
         code_cherch = request.GET.get('cod_chercher')
-        if len(code_cherch) == 0 or len(maladie):
+        if len(code_cherch) == 0:
             messages.info(request, "Saisissez le code du patient à chercher svp !")
             return redirect('patient_maladie_chronique_url')
         else:
-            liste = Patient_chronique.objects.all().values('id',
+            liste = Patient_chronique.objects.values('id',
             'patient__nom_pat', 'patient__prenom_pat', 'patient__contact', 'patient__zone__nom_zone', 
-            'patient__code', 'patient__groupe_sanguin', 'maladie_chronique__nom_maladie').filter(patient__code=code_cherch)
-            nbr = liste.count()
-            if len(nbr) == 0:
+            'patient__code', 'patient__groupe_sanguin', 'maladie_chronique__nom_maladie', 
+            'agent_centre__agent_sanitaire__nom', 'agent_centre__agent_sanitaire__prenom', 
+            'agent_centre__centre_sanitaire__nom_centre').filter(patient__code=code_cherch)
+            nbre = liste.count()
+            if nbre == 0:
                 messages.info(request, "Ce patient n'a pas d'une maladie chronique !")
                 return redirect('patient_maladie_chronique_url')
             else:
@@ -447,7 +477,9 @@ def chercher_patient_maladie_chronique(request):
         else:
             liste = Patient_chronique.objects.values('id',
             'patient__nom_pat', 'patient__prenom_pat', 'patient__contact', 'patient__zone__nom_zone', 
-            'patient__code', 'patient__groupe_sanguin', 'maladie_chronique__nom_maladie').filter(maladie_chronique__nom_maladie=mal_cherch)
+            'patient__code', 'patient__groupe_sanguin', 'maladie_chronique__nom_maladie', 
+            'agent_centre__agent_sanitaire__nom', 'agent_centre__agent_sanitaire__prenom', 
+            'agent_centre__centre_sanitaire__nom_centre').filter(maladie_chronique__nom_maladie=mal_cherch)
             nbr = liste.count()
             if nbr == 0:
                 messages.info(request, "Pas du patient qui a cette maladie chronique ou verifier l'orthographe !")

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="modal fade" id="modal-province">
+        
+        <div class="modal-dialog">
+            <div class="modal-content" id="cont">  
+                <form>            
+                    <div class="modal-header">
+                        <h5 class="modal-title">Modifier la cause</h5>
+                    </div>
+                    <div class="modal-body">
+                                    
+                    </div>
+                    <div class="modal-footer">
+                        <a  class="btn btn-default"  href="{% url 'chercher_information_url' %}">Close</a>
+                        <button type="submit" class="btn btn-primary">Sortir un fichier</button>
+                    </div>
+                </form> 
+            </div>
+        </div>
+    </div>    
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        $("body").ready(function(){
+            $('#modal-province').modal('show');
+        });  
+    </script>
+{% endblock %}

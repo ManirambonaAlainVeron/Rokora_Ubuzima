@@ -23,7 +23,9 @@ tbody {
     overflow-y: auto;
 }
 
-
+.cherche_info{
+    border: 2px solid black;
+  }
 
 
 tbody td, thead th {

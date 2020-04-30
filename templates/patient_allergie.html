@@ -50,7 +50,7 @@
     <div class="scrollable  mt-5">
         
         {% if nbr %}             
-            <h4>{{nbr}} personne{{nbr|pluralize}}</h4>
+            <h4>Resultat{{nbr|pluralize}} = {{nbr}} </h4>
         {% endif %}
 
             <table class="table table-bordered table-condense ">
@@ -63,6 +63,8 @@
                         <th >Code</th>
                         <th >Groupe Sanguin</th>
                         <th >Cause allergie</th>
+                        <th >Agent sanitaire</th>
+                        <th >Centre sanitaire</th>
                         <th ></th>
                     </tr>
                 </thead>
@@ -77,6 +79,8 @@
                             <td >{{item.patient__code}}</td>
                             <td >{{item.patient__groupe_sanguin}}</td>
                             <td >{{item.allergie__cause}}</td>
+                            <td >{{item.agent_centre__agent_sanitaire__nom}} {{item.agent_centre__agent_sanitaire__nom}}</td>
+                            <td >{{item.agent_centre__centre_sanitaire__nom_centre}}</td>
                             <td style="width: 50px;">
                                 <form action="delete_patient_allergie/{{ item.id }}" method="POST">
                                     {% csrf_token %}

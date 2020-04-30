@@ -101,5 +101,8 @@ urlpatterns = [
     path('delete_agent_centre/<int:id_ag_centre>', views.delete_agent_centre, name='delete_agent_centre_url'),
     path('chercher_agent_centre_par_centre', views.chercher_agent_centre_par_centre, name='chercher_agent_centre_par_centre_url'),
     path('chercher_agent_centre_par_prenom', views.chercher_agent_centre_par_prenom, name='chercher_agent_centre_par_prenom_url'),
+
+    #chercher_info 
+    path('chercher_information', views.show_chercher_info, name='chercher_information_url'),
     
 ]
