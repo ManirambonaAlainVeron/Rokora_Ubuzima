@@ -104,5 +104,6 @@ urlpatterns = [
 
     #chercher_info 
     path('chercher_information', views.show_chercher_info, name='chercher_information_url'),
+    path('afficher_information', views.afficher_information, name='afficher_information_url'),
     
 ]
