@@ -172,28 +172,6 @@ def chercher_consultation_par_patient(request):
             else:
                 return render(request, "consultation.html", locals())
 
-#information_views:
-def show_chercher_info(request):
-    return render(request, "chercher_info.html")
-
-def afficher_information(request):
-    code_cherche = request.GET.get('code_chercher')
-    if len(code_cherche) == 0:
-        messages.info(request, "Saisissez le code à chercher s'il vous plait !")
-        return redirect("chercher_information_url")
-    else:
-        patient = Patient.objects.values('nom_pat','prenom_pat','contact',
-        'groupe_sanguin','zone__nom_zone', 'zone__commune__nom_commune', 
-        'zone__commune__province__nom_province').get(code=code_cherche)
-        patient_allergie = Patient_allergie.objects.values('allergie__cause').filter(patient__code=code_cherche)
-        patient_maladie = Patient_chronique.objects.values('maladie_chronique__nom_maladie').filter(patient__code=code_cherche)
-        traitement = Consultation.objects.values('traitement', 'date').filter(patient__code=code_cherche)
-        centre_traitement = Consultation.objects.values(
-            'agent_centre__centre_sanitaire__nom_centre').filter(patient__code=code_cherche)
-        centre_chronique = Patient_chronique.objects.values(
-            'agent_centre__centre_sanitaire__nom_centre').get(patient__code=code_cherche)
-        return render(request, "afficher_info.html", locals())
-
 
 #patient views
 def show_patient_charge_zone(request):
@@ -843,5 +821,27 @@ def chercher_centre_sanitaire(request):
                 return redirect('centre_url')
             else:
                 return render(request, "centre_sanitaire.html", {'liste':centre})
+
+#information_views:
+def show_chercher_info(request):
+    return render(request, "chercher_info.html")
+
+def afficher_information(request):
+    code_cherche = request.GET.get('code_chercher')
+    if len(code_cherche) == 0:
+        messages.info(request, "Saisissez le code à chercher s'il vous plait !")
+        return redirect("chercher_information_url")
+    else:
+        patient = Patient.objects.values('nom_pat','prenom_pat','contact',
+        'groupe_sanguin','zone__nom_zone', 'zone__commune__nom_commune', 
+        'zone__commune__province__nom_province').get(code=code_cherche)
+        patient_allergie = Patient_allergie.objects.values('allergie__cause').filter(patient__code=code_cherche)
+        patient_maladie = Patient_chronique.objects.values('maladie_chronique__nom_maladie').filter(patient__code=code_cherche)
+        traitement = Consultation.objects.values('traitement', 'date').filter(patient__code=code_cherche)
+        centre_traitement = Consultation.objects.values(
+            'agent_centre__centre_sanitaire__nom_centre').filter(patient__code=code_cherche)
+        centre_chronique = Patient_chronique.objects.values(
+            'agent_centre__centre_sanitaire__nom_centre').get(patient__code=code_cherche)
+        return render(request, "afficher_info.html", locals())
 
 
