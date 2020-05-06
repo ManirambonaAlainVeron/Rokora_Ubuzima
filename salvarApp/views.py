@@ -837,11 +837,9 @@ def afficher_information(request):
         'zone__commune__province__nom_province').get(code=code_cherche)
         patient_allergie = Patient_allergie.objects.values('allergie__cause').filter(patient__code=code_cherche)
         patient_maladie = Patient_chronique.objects.values('maladie_chronique__nom_maladie').filter(patient__code=code_cherche)
-        traitement = Consultation.objects.values('traitement', 'date').filter(patient__code=code_cherche)
-        centre_traitement = Consultation.objects.values(
-            'agent_centre__centre_sanitaire__nom_centre').filter(patient__code=code_cherche)
-        centre_chronique = Patient_chronique.objects.values(
-            'agent_centre__centre_sanitaire__nom_centre').get(patient__code=code_cherche)
+        traitement = Consultation.objects.values('traitement', 'date').filter(patient__code=code_cherche).latest('date')
+        centre_traitement = Consultation.objects.values('traitement', 'date',
+            'agent_centre__centre_sanitaire__nom_centre').filter(patient__code=code_cherche).latest('date')
         return render(request, "afficher_info.html", locals())
 
 

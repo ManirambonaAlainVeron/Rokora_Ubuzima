@@ -11,7 +11,7 @@
     {% endif %}
     <form class="form-inline mt-2" method="GET" action="{% url 'chercher_consultation_url' %}">
         <div class="form-group">
-          <input type="Text" class="form-control" id="code_chercher" name="code_chercher" placeholder="chercher par code">
+          <input type="Text" class="form-control" id="code_chercher" name="code_chercher" placeholder="chercher par code" autocomplete="off">
         </div>
         <button type="submit" class="btn btn-primary">search</button>
         <button type="button" class="btn btn-primary ml-1" ><a style="color: white;" href="{% url 'consultation_url'%}">OK</a></button>
@@ -34,7 +34,7 @@
                     {% endfor %}
                 </select>
                 <label for="dates">Date :</label>
-                <input type="Text" class="form-control" id="dates" name="dates" disabled>
+                <input type="Text" class="form-control" id="dates" name="dates" readonly>
             </div> 
 
             <div class="col">
@@ -94,8 +94,6 @@
                 </tbody>
             </table>
     </div>
-    <a href="{% url 'patient_allergie_url' %}">patient_allergie</a>
-    <a href="{% url 'patient_maladie_chronique_url' %}">patient_maladie</a>
 {% endblock %}
 {% block javascript %}
     <script type="text/javascript">

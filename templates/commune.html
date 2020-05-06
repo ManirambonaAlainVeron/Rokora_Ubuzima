@@ -11,14 +11,14 @@
     {% endif %}
     <form class="form-inline mt-2" method="GET" action="{% url 'chercher_commune_pro_url' %}">
         <div class="form-group">
-          <input type="Text" class="form-control" id="nom_chercher" name="nom_chercher" placeholder="chercher par province">
+          <input type="Text" class="form-control" id="nom_chercher" name="nom_chercher" placeholder="chercher par province" autocomplete="off">
         </div>
         <button type="submit" class="btn btn-primary">search</button>
         <button type="button" class="btn btn-primary ml-1" ><a style="color: white;" href="{% url 'commune_url'%}">OK</a></button>
     </form>
     <form class="form-inline mt-2" method="GET" action="{% url 'chercher_commune_url' %}">
         <div class="form-group">
-          <input type="Text" class="form-control" id="nom_chercher_com" name="nom_chercher_com" placeholder="chercher commune">
+          <input type="Text" class="form-control" id="nom_chercher_com" name="nom_chercher_com" placeholder="chercher commune" autocomplete="off">
         </div>
         <button type="submit" class="btn btn-primary">search</button>
         <button type="button" class="btn btn-primary ml-1" ><a style="color: white;" href="{% url 'commune_url'%}">OK</a></button>

@@ -43,7 +43,7 @@
                               <div class="form-row">
                                 <div class="col-4">
                                   <label for="maladie">Maladie :</label>
-                                  <textarea type="text" class="form-control" id="maladie" rows="5" readonly>
+                                  <textarea type="text" class="form-control" id="maladie" rows="5" style="overflow: auto;"  readonly>
                                       {% for item  in patient_maladie %}
                                           - {{ item.maladie_chronique__nom_maladie}}
                                       {% endfor %}     
@@ -51,10 +51,10 @@
                                 </div>
                                 <div class="col-4">
                                   <label for="allergie">Allergie :</label>
-                                  <textarea type="text" class="form-control" rows="5" cols="80" readonly >
+                                  <textarea type="text" class="form-control" rows="5" style="overflow: auto;" readonly>
                                       {% for item  in patient_allergie %}
                                           - {{item.allergie__cause}}
-                                      {% endfor %}    
+                                      {% endfor %}   
                                   </textarea>
                                 </div>
                                 <div class="col-4">

@@ -13,10 +13,14 @@
         {% csrf_token %}
         <h1>Log In</h1>
         <div class="form-group col-md-3">
-            <input type="Text" class=" form-control form-control-lg" id="username" name="username" autocomplete="off" placeholder="Quel est votre username ? " required>
+            <input type="Text" class=" form-control form-control-lg" id="username" name="username" 
+            autocomplete="off" placeholder="Quel est votre username ? " required
+            oninvalid="this.setCustomValidity('Please Entrer votre username')" oninput="setCustomValidity('')">
         </div>
         <div class="form-group col-md-3">
-            <input type="password" class="form-control form-control-lg" id="password" name="password" style="margin-top: 100px ;" placeholder="Quel votre mot de passe ? " required>
+            <input type="password" class="form-control form-control-lg" id="password" name="password"
+             style="margin-top: 100px ;" placeholder="Quel votre mot de passe ? " required=""
+             oninvalid="this.setCustomValidity('Please Entrer votre password')" oninput="setCustomValidity('')">
         </div>
         <input type="image" src="{% static 'images/connect.png' %}" alt="submit" />
     </form>

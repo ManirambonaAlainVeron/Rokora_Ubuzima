@@ -11,7 +11,7 @@
     {% endif %}
     <form class="form-inline mt-2" method="GET" action="{% url 'chercher_agent_sanitaire_url' %}">
         <div class="form-group">
-          <input type="Text" class="form-control" id="nom_chercher" name="nom_chercher" placeholder="chercher par nom">
+          <input type="Text" class="form-control" id="nom_chercher" name="nom_chercher" autocomplete="off" placeholder="chercher par nom">
         </div>
         <button type="submit" class="btn btn-primary">search</button>
         <button type="button" class="btn btn-primary ml-1" ><a style="color: white;" href="{% url 'agent_sanitaire_url'%}">OK</a></button>

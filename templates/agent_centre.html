@@ -10,14 +10,14 @@
     {% endif %}
     <form class="form-inline mt-2" method="GET" action="{% url 'chercher_agent_centre_par_centre_url' %}">
         <div class="form-group">
-          <input type="Text" class="form-control" id="centre_chercher" name="centre_chercher" placeholder="chercher par centre">
+          <input type="Text" class="form-control" id="centre_chercher" name="centre_chercher" autocomplete="off" placeholder="chercher par centre">
         </div>
         <button type="submit" class="btn btn-primary">search</button>
         <button type="button" class="btn btn-primary ml-1" ><a style="color: white;" href="{% url 'agent_centre_url'%}">OK</a></button>
     </form>
     <form class="form-inline mt-2" method="GET" action="{% url 'chercher_agent_centre_par_prenom_url' %}">
         <div class="form-group">
-          <input type="Text" class="form-control" id="prenom_chercher" name="prenom_chercher" placeholder="chercher par prenom">
+          <input type="Text" class="form-control" id="prenom_chercher" name="prenom_chercher" autocomplete="off" placeholder="chercher par prenom">
         </div>
         <button type="submit" class="btn btn-primary">search</button>
         <button type="button" class="btn btn-primary ml-1" ><a style="color: white;" href="{% url 'agent_centre_url' %}">OK</a></button>
