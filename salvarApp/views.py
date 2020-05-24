@@ -8,6 +8,10 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from .models import Province, Allergie, Maladie_chronique, Centre_sanitaire, Commune, Zone, Patient, Patient_allergie, Patient_chronique, Agent_sanitaire, Agent_centre, Consultation
+from reportlab.pdfgen import canvas
+from reportlab.lib.utils import ImageReader
+import os.path
+from PIL import Image
 
 # Create your views here.
 def show_Accueil(request):
@@ -832,14 +836,63 @@ def afficher_information(request):
         messages.info(request, "Saisissez le code à chercher s'il vous plait !")
         return redirect("chercher_information_url")
     else:
-        patient = Patient.objects.values('nom_pat','prenom_pat','contact',
-        'groupe_sanguin','zone__nom_zone', 'zone__commune__nom_commune', 
-        'zone__commune__province__nom_province').get(code=code_cherche)
-        patient_allergie = Patient_allergie.objects.values('allergie__cause').filter(patient__code=code_cherche)
-        patient_maladie = Patient_chronique.objects.values('maladie_chronique__nom_maladie').filter(patient__code=code_cherche)
-        traitement = Consultation.objects.values('traitement', 'date').filter(patient__code=code_cherche).latest('date')
-        centre_traitement = Consultation.objects.values('traitement', 'date',
-            'agent_centre__centre_sanitaire__nom_centre').filter(patient__code=code_cherche).latest('date')
+        try:
+            patient = Patient.objects.values('nom_pat','prenom_pat','contact',
+            'groupe_sanguin','zone__nom_zone', 'zone__commune__nom_commune', 
+            'zone__commune__province__nom_province').get(code=code_cherche)
+            patient_allergie = Patient_allergie.objects.values('allergie__cause').filter(patient__code=code_cherche)
+            patient_maladie = Patient_chronique.objects.values('maladie_chronique__nom_maladie').filter(patient__code=code_cherche)
+            traitement = Consultation.objects.values('traitement', 'date').filter(patient__code=code_cherche).latest('date')
+            centre_traitement = Consultation.objects.values('traitement', 'date',
+                'agent_centre__centre_sanitaire__nom_centre').filter(patient__code=code_cherche).latest('date')
+
+        except	ObjectDoesNotExist:
+            messages.info(request, "Le patient n'existe pas ou verifier le code!")
+            return redirect("chercher_information_url")
         return render(request, "afficher_info.html", locals())
+
+#generate a pdf file
+def generate_file(request):
+    try:
+        file_name = "C:/Users/VERON/Desktop/info.pdf"
+        #fn = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logo.png')
+        f = Image.open("{% static 'images/connect.png' %}")
+        #logo = ImageReader('logo.png')
+        #logo = ImageReader()
+        pdf = canvas.Canvas(file_name)
+        pdf.setLineWidth(.3)
+        pdf.drawImage(f, 10, 810, mask='auto')
+        pdf.drawString(200, 800, "les informations concernant la personne")
+        pdf.line(200,795,410,795)
+        pdf.drawString(50, 750,"Nom :")
+        pdf.drawString(110, 750,request.POST.get("nom"))
+        pdf.drawString(50, 700,"Prenom :")
+        pdf.drawString(110, 700,request.POST.get("prenom"))
+        pdf.drawString(50, 650,"Contact :")
+        pdf.drawString(110, 650,request.POST.get("contact"))
+        pdf.drawString(50, 600,"Province :")
+        pdf.drawString(110, 600,request.POST.get("province"))
+        pdf.drawString(50, 550,"Commune :")
+        pdf.drawString(120, 550,request.POST.get("commune"))
+        pdf.drawString(50, 500,"Zone :")
+        pdf.drawString(110, 500,request.POST.get("zone"))
+        pdf.drawString(50, 450,"Maladie :")
+        pdf.drawString(110, 450,request.POST.get("maladie"))
+        pdf.drawString(50, 400,"Allergie :")
+        pdf.drawString(110, 400,request.POST.get("allergie"))
+        pdf.drawString(50, 350,"Groupe Sanguin :")
+        pdf.drawString(150, 350,request.POST.get("sanguin"))
+        pdf.drawString(50, 300,"Traitement en cour :")
+        pdf.drawString(160, 300,request.POST.get("traitement"))
+        pdf.drawString(50, 250,"Centre sanitaire :")
+        pdf.drawString(150, 250,request.POST.get("centre"))
+        pdf.drawString(50, 200,"Date de traitement :")
+        pdf.drawString(160, 200,request.POST.get("date"))
+        pdf.save()
+        messages.info(request, "Le fichier a été enregistrer dans le bracelet ou dans le carte")
+        return redirect("chercher_information_url")
+    except PermissionError:
+        messages.info(request, "Le fichier existant est ouvert sur votre ordinateur,il faut le fermé d'abord !")
+        return redirect("chercher_information_url")
 
 

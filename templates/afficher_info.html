@@ -1,49 +1,49 @@
 {% extends 'base.html' %}
 {% block content %}
     <div class="modal fade" id="modal-province">
-        
         <div class="modal-dialog">
             <div class="modal-content" id="cont">  
-                <form>            
+                <form action="{% url 'file_url' %}" method="POST" id="ense">
+                    {% csrf_token %}            
                     <div class="modal-header">
                         <h5 class="modal-title">Information du patient {{code_cherche}}</h5>
                     </div>
                     <div class="modal-body">
-                        <form>
+                    
                             <div class="form-row">
                               <div class="col-4">
                                 <label for="nom">Nom :</label>
-                                <input type="text" class="form-control" id="nom" value="{{patient.nom_pat}}" readonly >
+                                <input type="text" class="form-control" id="nom" name="nom" value="{{patient.nom_pat}}" readonly >
                               </div>
                               <div class="col-4">
                                 <label for="prenom">Prenom :</label>
-                                <input type="text" class="form-control" id="prenom" value="{{patient.prenom_pat}}" readonly >
+                                <input type="text" class="form-control" id="prenom" name="prenom" value="{{patient.prenom_pat}}" readonly >
                               </div>
                               <div class="col-4">
                                 <label for="contact">Contact :</label>
-                                <input type="text" class="form-control" id="contact" value="{{patient.contact}}" readonly >
+                                <input type="text" class="form-control" id="contact" name="contact" value="{{patient.contact}}" readonly >
                               </div>
                             </div>
 
-                            <div class="form-row">
+                              <div class="form-row">
                                 <div class="col-4">
                                   <label for="province">Province :</label>
-                                  <input type="text" class="form-control" id="province" value="{{patient.zone__commune__province__nom_province}}" readonly>
+                                  <input type="text" class="form-control" id="province" name="province" value="{{patient.zone__commune__province__nom_province}}" readonly>
                                 </div>
                                 <div class="col-4">
                                   <label for="commune">Commune :</label>
-                                  <input type="text" class="form-control" id="commune" value="{{patient.zone__commune__nom_commune}}" readonly>
+                                  <input type="text" class="form-control" id="commune" name="commune" value="{{patient.zone__commune__nom_commune}}" readonly>
                                 </div>
                                 <div class="col-4">
                                   <label for="zone">Zone :</label>
-                                  <input type="text" class="form-control" id="zone" value="{{patient.zone__nom_zone}}" readonly >
+                                  <input type="text" class="form-control" id="zone" name="zone" value="{{patient.zone__nom_zone}}" readonly >
                                 </div>
                               </div>
 
                               <div class="form-row">
                                 <div class="col-4">
                                   <label for="maladie">Maladie :</label>
-                                  <textarea type="text" class="form-control" id="maladie" rows="5" style="overflow: auto;"  readonly>
+                                  <textarea type="text" class="form-control" id="maladie" name="maladie" rows="5" style="overflow: auto;"  readonly>
                                       {% for item  in patient_maladie %}
                                           - {{ item.maladie_chronique__nom_maladie}}
                                       {% endfor %}     
@@ -51,7 +51,7 @@
                                 </div>
                                 <div class="col-4">
                                   <label for="allergie">Allergie :</label>
-                                  <textarea type="text" class="form-control" rows="5" style="overflow: auto;" readonly>
+                                  <textarea type="text" class="form-control" name="allergie" rows="5" style="overflow: auto;" readonly>
                                       {% for item  in patient_allergie %}
                                           - {{item.allergie__cause}}
                                       {% endfor %}   
@@ -59,32 +59,34 @@
                                 </div>
                                 <div class="col-4">
                                   <label for="sanguin">Groupe sanguin :</label>
-                                  <input type="text" class="form-control" id="sanguin" value="{{patient.groupe_sanguin}}" readonly>
+                                  <input type="text" class="form-control" id="sanguin" name="sanguin" value="{{patient.groupe_sanguin}}" readonly>
                                 </div>
                               </div>
 
                               <div class="form-row">
                                 <div class="col-4">
                                   <label for="traitement">les traitement en cours :</label>
-                                  <textarea type="text" class="form-control" id="traitement" rows="5" readonly>{{traitement.traitement}}</textarea>
+                                  <textarea type="text" class="form-control" id="traitement" name="traitement" rows="5" readonly>{{traitement.traitement}}</textarea>
                                 </div>
                                 <div class="col-4">
                                   <label for="centre">Centre sanitaire des traitements :</label>
-                                  <input type="text" class="form-control" id="centre" value="{{centre_traitement.agent_centre__centre_sanitaire__nom_centre}}" readonly>
+                                  <input type="text" class="form-control" id="centre" name="centre" value="{{centre_traitement.agent_centre__centre_sanitaire__nom_centre}}" readonly>
                                 </div>
                                 <div class="col-4">
                                   <label for="date">Date des dernières traitement</label>
-                                  <input type="text" class="form-control" id="date" value="{{traitement.date}}" readonly>
+                                  <input type="text" class="form-control" id="date" name="date" value="{{traitement.date}}" readonly>
                                 </div>
                               </div>
-                          </form>            
+                             
                     </div>
+
                     <div class="modal-footer">
                         <a  class="btn btn-default"  href="{% url 'chercher_information_url' %}">OK</a>
                         <button type="submit" class="btn btn-primary">Sortir un fichier</button>
                     </div>
+
                 </form> 
-            </div>
+           </div>
         </div>
     </div>    
 {% endblock %}
