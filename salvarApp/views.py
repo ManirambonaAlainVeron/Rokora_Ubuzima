@@ -12,6 +12,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.utils import ImageReader
 import os.path
 from PIL import Image
+from reportlab.lib.units import cm
 
 # Create your views here.
 def show_Accueil(request):
@@ -36,9 +37,12 @@ def connexion(request):
             if profil['agent_sanitaire__profil'] == "administrateur":
                 login(request, user)
                 return redirect("agent_sanitaire_url")
+            elif profil['agent_sanitaire__profil'] == "moyenne":
+                login(request, user)
+                return redirect("patient_url")
             else:
                 login(request, user)
-                return redirect("consultation_url")
+                return redirect("chercher_information_url")
         else:
             messages.info(request, "Echec de connexion, le username ou le mot de passe est incorrecte ou tu es desactivé !")
             return redirect("auth_url")
@@ -855,13 +859,14 @@ def afficher_information(request):
 def generate_file(request):
     try:
         file_name = "C:/Users/VERON/Desktop/info.pdf"
+        #file_name = "F:/info.pdf"
         #fn = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logo.png')
-        f = Image.open("{% static 'images/connect.png' %}")
+        #f = Image.open("{% static 'images/connect.png' %}")
         #logo = ImageReader('logo.png')
         #logo = ImageReader()
         pdf = canvas.Canvas(file_name)
         pdf.setLineWidth(.3)
-        pdf.drawImage(f, 10, 810, mask='auto')
+        #pdf.drawImage(f, 10, 810, mask='auto')
         pdf.drawString(200, 800, "les informations concernant la personne")
         pdf.line(200,795,410,795)
         pdf.drawString(50, 750,"Nom :")
@@ -877,13 +882,28 @@ def generate_file(request):
         pdf.drawString(50, 500,"Zone :")
         pdf.drawString(110, 500,request.POST.get("zone"))
         pdf.drawString(50, 450,"Maladie :")
-        pdf.drawString(110, 450,request.POST.get("maladie"))
+        a = request.POST.get("maladie")
+        textobject = pdf.beginText(110,450)
+        for line in a.splitlines(False):
+            textobject.textLine(line.rstrip())
+        pdf.drawText(textobject)
+        # pdf.drawString(110, 450,request.POST.get("maladie"))
         pdf.drawString(50, 400,"Allergie :")
-        pdf.drawString(110, 400,request.POST.get("allergie"))
+        x = request.POST.get("allergie")
+        textobject = pdf.beginText(110, 400)
+        for line in x.splitlines(False):
+            textobject.textLine(line.rstrip())
+        pdf.drawText(textobject)
+        # pdf.drawString(110, 400,request.POST.get("allergie"))
         pdf.drawString(50, 350,"Groupe Sanguin :")
         pdf.drawString(150, 350,request.POST.get("sanguin"))
         pdf.drawString(50, 300,"Traitement en cour :")
-        pdf.drawString(160, 300,request.POST.get("traitement"))
+        d = request.POST.get("traitement")
+        textobject = pdf.beginText(160, 300)
+        for line in d.splitlines(False):
+            textobject.textLine(line.rstrip())
+        pdf.drawText(textobject)
+        # pdf.drawText(160, 300,request.POST.get("traitement"))
         pdf.drawString(50, 250,"Centre sanitaire :")
         pdf.drawString(150, 250,request.POST.get("centre"))
         pdf.drawString(50, 200,"Date de traitement :")

@@ -1,8 +1,15 @@
 {% extends 'base.html' %}
+
 {% block content %}
-    
+    <div id='cssmenu' style="background-color:#04267E">
+        <ul>
+        <li ><a href="centre_sanitaire"><span>Centre sanitaire</span></a></li>
+        <li><a href="agent_centre"><span>Agent -> centre</span></a></li>
+        <li><a href="."><span>Quiter</span></a></li>
+        </ul>
+    </div>
     {% if messages %}
-        <div class="alert alert-primary " role="alert">
+        <div class="alert alert-warning " role="alert">
             {% for message in messages %}
                 <strong>{{message}}</strong>
             {% endfor %}
@@ -11,7 +18,7 @@
     {% endif %}
     <form class="form-inline mt-2" method="GET" action="{% url 'chercher_agent_sanitaire_url' %}">
         <div class="form-group">
-          <input type="Text" class="form-control" id="nom_chercher" name="nom_chercher" autocomplete="off" placeholder="chercher par nom">
+          <input type="Text" class="form-control" id="nom_chercher" name="nom_chercher" autocomplete="off" placeholder="chercher par prenom">
         </div>
         <button type="submit" class="btn btn-primary">search</button>
         <button type="button" class="btn btn-primary ml-1" ><a style="color: white;" href="{% url 'agent_sanitaire_url'%}">OK</a></button>
@@ -37,6 +44,7 @@
                         <select class="form-control ml-3 col-md-5" name="profil"  id="profil">
                             <option value="">selectionnez profil ?</option>
                             <option value="administrateur">Admin</option>
+                            <option value="moyenne">Moyenne</option>
                             <option value="simple">Simple</option>
                         </select><br>
                     </div>
@@ -95,7 +103,7 @@
 {% block javascript %}
     <script type="text/javascript">
         setTimeout(function() {
-            $('.alert').fadeOut('slow');}, 5000
+            $('.alert').slideUp('slow');}, 5000
           );
         
         

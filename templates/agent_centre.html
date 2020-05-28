@@ -1,6 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
-    
+    <div id='cssmenu' style="background-color:#04267E">
+        <ul>
+        <li><a href="agent_sanitaire"><span>Agent sanitaire</span></a></li>
+        <li ><a href=" centre_sanitaire"><span>Centre sanitaire</span></a></li>
+        <li><a href="."><span>Quiter</span></a></li>
+        </ul>
+    </div>
     {% if messages %}
         <div class="alert alert-primary " role="alert">
             {% for message in messages %}
@@ -84,7 +90,7 @@
 {% block javascript %}
     <script type="text/javascript">
         setTimeout(function() {
-            $('.alert').fadeOut('slow');}, 5000
+            $('.alert').slideUp('slow');}, 5000
           );
         
         $(function(){

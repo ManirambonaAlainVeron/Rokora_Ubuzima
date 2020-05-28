@@ -110,3 +110,4 @@ urlpatterns = [
     path('generer_fichier', views.generate_file, name='file_url'),
     
 ]
+#file_name = "F:/info.pdf"
