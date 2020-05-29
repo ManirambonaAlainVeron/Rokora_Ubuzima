@@ -23,14 +23,13 @@ body {
 .authe
 {
   border: solid 1px lightblue;
-  background-color: blanchedalmond;
+  background-color: blanchedalmond; 
 }
 
 #cssmenu {
   
   width: auto;
 }
-
 #cssmenu ul {
   list-style: none;
   margin: 0;
@@ -38,7 +37,6 @@ body {
   line-height: 1;
   display: block;
   zoom: 1;
-
 }
 #cssmenu ul:after {
   content: " ";
@@ -77,6 +75,7 @@ body {
 }
 #cssmenu ul li a:hover {
   color: lightskyblue;
+  
 }
 #cssmenu ul li a:hover:before {
   width: 100%;
@@ -147,4 +146,12 @@ body {
     display: none;
   }
 }
+/* 
+#cssmenu li {float:left;}
+#cssmenu li a {padding:9px 20px;display:block;text-decoration:none;font:12px;}
+#cssmenu ul {position:absolute;left:-9999px;top:-9999px;list-style-type:none;}
+#cssmenu li:hover{position:relative;}
+#cssmenu li:hover ul {left:0px;top:30px;padding:0px;}
+#cssmenu li:hover ul li a {display:block;padding:5px;width:150px;text-indent:15px;} */
+        
 

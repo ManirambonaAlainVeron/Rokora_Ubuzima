@@ -1,6 +1,23 @@
 {% extends 'base.html' %}
 {% block content %}
-    
+    <div id='cssmenu' style="background-color:#04267E">
+        <ul>
+            <li><a href='#'>Ajouter &#9662;</a>
+                <ul>
+                    <li ><a href="allergie"><span>Ajouter allergie</span></a></li>
+                </ul>
+            </li>
+            <li><a href="consultation"><span>Consultation</span></a></li>
+            <li ><a href="allergie"><span>Ajouter allergie</span></a></li>
+            <li><a href="maladie_chronique"><span>Maladie Chronique</span></a></li>
+            <li ><a href="patient_allergie"><span>Patient->allergie</span></a></li>
+            <li><a href="patient_maladie_chronique"><span>Patient->Chronique</span></a></li>
+            <li ><a href="province"><span>Ajouter province</span></a></li>
+            <li><a href="commune"><span>Ajouter commune</span></a></li>
+            <li ><a href="zone"><span>Ajouter zone</span></a></li>
+            <li><a href="."><span>Quiter</span></a></li>
+        </ul>
+    </div>
     {% if messages %}
         <div class="alert alert-primary " role="alert">
             {% for message in messages %}
@@ -74,7 +91,7 @@
                     </div>      
                 </form>
             </div>
-            <div class="scrollable  col-8">
+            <div class="scrollable  col-8" style="padding: 0px;">
                     
                     {% if nbr_patient %}
                         <h3>Resultat{{nbr_patient|pluralize}} = {{nbr_patient}} </h3>
